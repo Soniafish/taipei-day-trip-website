@@ -58,103 +58,144 @@ def thankyou():
 
 @app.route("/api/attractions", methods=["GET"])
 def getAttractions():
+	page=request.args.get("page", 0)  #預設page值為0
+	page=int(page)
+	keyword=request.args.get("keyword", "")  #預設keyword值為""
+	# print(page)
+	# print(keyword)
+	statement=""
+	p_idx = 12 * page
+	p_count = 12
+	nextPage = page+1
+	
+	resp_json={}
+	resp_status=200
+	resp_contentType='application/json'
+	resp = Response(
+		response=json.dumps(resp_json),
+		status=200,
+		content_type=resp_contentType
+	)
+	
+	if keyword=="":
+		cursor.execute("select count(*) from taipeiAttrations")
+		count=cursor.fetchone()
+		print(count[0])
+		if count[0] <  12 * (page + 1):
+			p_count = count % 12
+			nextPage = None
+			print("p_count:", p_count)
+		statement=f"select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations order by id limit {p_idx},{p_count}"
+	else:
+		cursor.execute("select count(*) from taipeiAttrations where category like '%"+keyword+"%'")
+		count=cursor.fetchone()
+		print(count[0])
+		if count[0] <  12 * (page + 1):
+			p_count = count[0] % 12
+			nextPage = None
+			print("p_count:", p_count)
+		statement ="select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations where category like '%"+keyword+f"%' order by id limit {p_idx},{p_count}"
+	print(statement)
+	
+	result=cursor.execute(statement)
+	# print(result)
+	if result:   
+		filterData=cursor.fetchall()   #取得景點
 
-	# content_type = request.headers['Content-Type']
-    # if content_type != 'application/json':
-	# 	return json.dumps({"error":"bad request"})
+		# print(filterData)
+		data=[]
+		for item in filterData:
+			images=item[9].split(",")
+			data.append({
+				"id": item[0],
+				"name": item[1],
+				"category": item[2],
+				"description": item[3],
+				"address": item[4],
+				"transport": item[5],
+				"mrt": item[6],
+				"latitude": item[7],
+				"longitude": item[8],
+				"images": images[0: -1]
+			})
 
-	# else:
-
-		page=request.args.get("page", 0)  #預設page值為0
-		page=int(page)
-		keyword=request.args.get("keyword", "")  #預設keyword值為""
-		# print(page)
-		# print(keyword)
-		statement=""
-		p_min = 12 * page
-		p_max = 12 * (page + 1) - 1 
-		if keyword=="":
-			statement=f"select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations order by id limit {p_min},{p_min}"
-		else:
-			statement ="select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations where category like '%"+keyword+f"%' order by id limit {p_min},{p_max}"
-		# print(statement)
-		
-		result=cursor.execute(statement)
-		# print(result)
-		if result:   
-			filterData=cursor.fetchall()   #取得景點
-
-			# print(filterData)
-			data=[]
-			for item in filterData:
-				images=item[9].split(",")
-				data.append({
-					"id": item[0],
-					"name": item[1],
-					"category": item[2],
-					"description": item[3],
-					"address": item[4],
-					"transport": item[5],
-					"mrt": item[6],
-					"latitude": item[7],
-					"longitude": item[8],
-					"images": images[0: -1]
-				})
-			return json.dumps({
-					"nextPage": page+1,
+		return Response(
+				response=json.dumps({
+					"nextPage": nextPage,
 					"data": data
-					})
+					}),
+				status=200,
+				content_type='application/json'
+			)
 
-		else:
-			return json.dumps({
-					"nextPage": 0,
-					"data": ''
-					})
-			
-		return json.dumps({
-				"error": true,
-				"message": "系統錯誤"
-				})
+	else:
+		return Response(
+				response=json.dumps({
+					"nextPage": None,
+					"data": ""
+					}),
+				status=200,
+				content_type='application/json'
+			)
+	
+	
+	return Response(
+				response=json.dumps({
+					"error": true,
+					"message": "系統錯誤"
+					}),
+				status=500,
+				content_type='application/json'
+			)
 
 
 @app.route("/api/attraction/<attractionId>", methods=["GET"])
 def getAttraction(attractionId):
+	# attractionId=int(attractionId)
+	print(type(attractionId))
+	statement=f"select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations where id={attractionId}"
+	result=cursor.execute(statement)
+	if result:
+		filterData=cursor.fetchone()
+		# print(filterData)
+		images=filterData[9].split(",")
+		data={
+			"id": filterData[0],
+			"name": filterData[1],
+			"category": filterData[2],
+			"description": filterData[3],
+			"address": filterData[4],
+			"transport": filterData[5],
+			"mrt": filterData[6],
+			"latitude": filterData[7],
+			"longitude": filterData[8],
+			"images": images[0: -1]
+		}
+		# print(data)
+		return Response(
+				response=json.dumps({"data": data}),
+				status=200,
+				content_type='application/json'
+			)
 
-	# content_type = request.headers['Content-Type']
-    # if content_type != 'application/json':
-	# 	return json.dumps({"error":"bad request"})
+	else:
+		return Response(
+				response=json.dumps({
+					"error": "true",
+					"message": "景點編號不正確"
+				}),
+				status=400,
+				content_type='application/json'
+			)
 
-	# else:
-		statement=f"select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations where id={attractionId}"
-		result=cursor.execute(statement)
-		if result:
-			filterData=cursor.fetchone()
-			# print(filterData)
-			images=filterData[9].split(",")
-			data={
-				"id": filterData[0],
-				"name": filterData[1],
-				"category": filterData[2],
-				"description": filterData[3],
-				"address": filterData[4],
-				"transport": filterData[5],
-				"mrt": filterData[6],
-				"latitude": filterData[7],
-				"longitude": filterData[8],
-				"images": images[0: -1]
-			}
-			return json.dumps({"data": data})
-
-		else:
-			return json.dumps({
-						"error": true,
-						"message": "景點編號不正確"
-					})
-
-		return json.dumps({
-					"error": true,
-					"message": "自訂的錯誤訊息"
-				})
+	return Response(
+				response=json.dumps({
+					"error": "true",
+					"message": "系統錯誤"
+				}),
+				status=500,
+				content_type='application/json'
+			)
 
 
 if (os.environ['localdebug']=='true'):
