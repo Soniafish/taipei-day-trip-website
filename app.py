@@ -68,21 +68,21 @@ def getAttractions():
 	p_count = 12
 	nextPage = page+1
 	
-	resp_json={}
-	resp_status=200
-	resp_contentType='application/json'
-	resp = Response(
-		response=json.dumps(resp_json),
-		status=200,
-		content_type=resp_contentType
-	)
-	
 	if keyword=="":
 		cursor.execute("select count(*) from taipeiAttrations")
 		count=cursor.fetchone()
 		print(count[0])
-		if count[0] <  12 * (page + 1):
-			p_count = count % 12
+		if count[0] < p_idx:
+			return Response(
+				response=json.dumps({
+					"nextPage": None,
+					"data": []
+					}),
+				status=200,
+				content_type='application/json'
+			)
+		elif count[0] <  12 * (page + 1):
+			p_count = count[0] % 12
 			nextPage = None
 			print("p_count:", p_count)
 		statement=f"select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations order by id limit {p_idx},{p_count}"
@@ -119,6 +119,7 @@ def getAttractions():
 				"images": images[0: -1]
 			})
 
+			print(data[0]["images"])
 		return Response(
 				response=json.dumps({
 					"nextPage": nextPage,
@@ -132,7 +133,7 @@ def getAttractions():
 		return Response(
 				response=json.dumps({
 					"nextPage": None,
-					"data": ""
+					"data": []
 					}),
 				status=200,
 				content_type='application/json'
