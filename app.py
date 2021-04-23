@@ -87,14 +87,14 @@ def getAttractions():
 			print("p_count:", p_count)
 		statement=f"select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations order by id limit {p_idx},{p_count}"
 	else:
-		cursor.execute("select count(*) from taipeiAttrations where category like '%"+keyword+"%'")
+		cursor.execute("select count(*) from taipeiAttrations where name like '%"+keyword+"%'")
 		count=cursor.fetchone()
 		print(count[0])
 		if count[0] <  12 * (page + 1):
 			p_count = count[0] % 12
 			nextPage = None
 			print("p_count:", p_count)
-		statement ="select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations where category like '%"+keyword+f"%' order by id limit {p_idx},{p_count}"
+		statement ="select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations where name like '%"+keyword+f"%' order by id limit {p_idx},{p_count}"
 	print(statement)
 	
 	result=cursor.execute(statement)
