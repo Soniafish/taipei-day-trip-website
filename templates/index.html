@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="http://3.18.227.207:3000/static/main.css"> -->
     <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css">
     <title>Taipei-TRIP</title>
 </head>
@@ -24,7 +25,7 @@
                 <p>探索每個角落，體驗城市的深度旅遊行程</p>
                 <div class="search_wrap">
                     <input type="text" placeholder="輸入景點名稱查詢" id="searchAttractions"><button onclick="searchAttractions()"><img
-                            src="http://127.0.0.1:3000/static/images/search.svg" alt="search"></button>
+                            src="http://3.18.227.207:3000/static/images/search.svg" alt="search"></button>
                 </div>
             </div>
         </div>
@@ -32,8 +33,8 @@
         <div class="container" id="attrationsList_wrap">
             <div class="attrations_list" id="attrations_list">
             <!-- <div class="attrationBox">
-                    <a href="http://127.0.0.1:3000/attraction.html">
-                        <img src="http://127.0.0.1:3000/static/images/empty.png" style="background-image:url('http://via.placeholder.com/600x600')" alt="" width="100%">
+                    <a href="http://3.18.227.207:3000/attraction.html">
+                        <img src="http://3.18.227.207:3000/static/images/empty.png" style="background-image:url('http://via.placeholder.com/600x600')" alt="" width="100%">
                     </a>
                     <p class="attrationBox_name">平安鐘</p>
                     <p class="attrationBox_info">
@@ -100,7 +101,7 @@
 
     <div class="popup" id="popup_login">
         <span></span>
-        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="http://127.0.0.1:3000/static/images/esc.svg" alt=""></a>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="http://3.18.227.207:3000/static/images/esc.svg" alt=""></a>
         <p class="title">登入會員帳號</p>
         <input type="text" placeholder="輸入電子信箱">
         <input type="text" placeholder="輸入密碼">
@@ -109,7 +110,7 @@
     </div>
     <div class="popup" id="popup_regist">
         <span></span>
-        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="http://127.0.0.1:3000/static/images/esc.svg" alt=""></a>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="http://3.18.227.207:3000/static/images/esc.svg" alt=""></a>
         <p class="title">註冊會員帳號</p>
         <input type="text" placeholder="輸入姓名">
         <input type="text" placeholder="輸入電子信箱">
@@ -195,6 +196,7 @@
                     //畫畫面
                     let attrations_list = document.getElementById("attrations_list");
                     for (let i = 0; i < result.data.length; i++) {
+                        // let attrationHref = "http://3.18.227.207:3000/attraction/" + result.data[i].id;
                         let attrationHref = "http://127.0.0.1:3000/attraction/"+result.data[i].id;
                         let imgSrc = result.data[i].images[0];
                         let attrationName = result.data[i].name;
@@ -208,7 +210,7 @@
                         attrationBoxImgLink.href= attrationHref;
 
                         let attrationBoxImg = document.createElement('img');
-                        attrationBoxImg.src = "http://127.0.0.1:3000/static/images/empty.png";
+                        attrationBoxImg.src = "http://3.18.227.207:3000/static/images/empty.png";
                         attrationBoxImg.style.backgroundImage = "url(" + imgSrc + ")";
                     
                         attrationBoxImg.alt = attrationName;
