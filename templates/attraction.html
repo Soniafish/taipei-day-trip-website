@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css">
+    <title>Taipei-TRIP</title>
+</head>
+
+<body>
+    <header>
+        <div class="header_top container">
+            <h1>台北一日遊</h1>
+            <div>
+                <a href="#" class="btn_txt">預定行程</a>
+                <a href="#" class="btn_txt" onclick="openPopup('popup_login')">登入/註冊</a>
+            </div>
+        </div>
+    </header>
+    <div class="maincontent container" id="attration">
+        <div class="attration_wrap">
+            <div class="attration_img">
+                <a href="#" class="btn_prev"><img src="http://127.0.0.1:3000/static/images/prev.svg" alt="prev"></a>
+                <a href="#" class="btn_next"><img src="http://127.0.0.1:3000/static/images/next.svg" alt="next"></a>
+                <img src="http://127.0.0.1:3000/static/images/empty.png" style="background-image:url('http://via.placeholder.com/600x600')" alt="" width="100%">
+            </div>
+            <div class="attration_trip">
+                <h1>平安鐘</h1>
+                <p class="attration_trip_category">公共藝術 at 忠孝復興</p>
+
+                <div class="attration_trip_info">
+                    <p class="title">預購導覽行程</p>
+                    <p>此景點為中心的一日行程，帶您探索城市角落故事</p>
+                    <div>
+                        <span class="title">選擇日期：</span> <input type="date"></div>
+                    <div>
+                        <span class="title">選擇時間：</span>
+                        <label><input type="radio" name="time">上半天</label>
+                        <label><input type="radio" name="time">下半天</label>
+                    </div>
+                    <div><span class="title">導覽費用：</span>新台幣2000元</div>
+                    <button>開始預定行程</button>
+                </div>
+            </div>
+        </div>
+        <div class="attration_info">
+            <div>
+                平安鐘祈求大家的平安，這是為了紀念921地震週年的設計，在喧鬧的廣場上每個小時鳴鐘，保佑平安，祈禱臺灣不會再發生這樣的天災。雙手合十加上108個黃色的琉璃乳丁，隨著緩緩流下的水，在底下的一個小噴泉噴出。雙手合十的意義，一個是祈福，一個是包容，教我們要包容這樣的改變，撫平這樣的傷口。下面的水緩緩流出，代表著人的生命力是不斷地延續下去。緩緩地鐘聲，卻帶來心中的寧靜。
+                這個平安鐘是由建築師姚仁喜與琉璃創作家王俠軍共同設計，長6公尺、寬5公尺，以鑄銅製成，由法鼓山文教基金會全額出資。平安鐘點綴都市景觀，不時提醒大家，面對刻骨銘心的災難痛苦，更應該有謙卑的一顆心。
+            </div>
+            <div>
+                <p class="title">景點地址：</p>
+                <p>臺北市 大安區忠孝東路4段</p>
+            </div>
+            <div>
+                <p class="title">交通方式：</p>
+                <p>
+                    捷運站名：忠孝復興站4號出口1.公車：204、212、212直、232、232副、262、262(區間)、278、299、521、605、605(副)、605(新台五線)、667、903、忠孝新幹線至頂好市場站
+                    2.車位：太平洋崇光百貨地下停車場或市民大道附近地下停車場
+                </p>
+            </div>
+        </div>
+    </div>
+    <footer>COPYRIGHT © 2021 台北一日遊</footer>
+
+    <div class="popup" id="popup_login">
+        <span></span>
+        <a href="#" class="btn_esc" onclick="closePopup(this)"><img src="http://127.0.0.1:3000/static/images/esc.svg"
+                alt=""></a>
+        <p class="title">登入會員帳號</p>
+        <input type="text" placeholder="輸入電子信箱">
+        <input type="text" placeholder="輸入密碼">
+        <button>登入帳號</button>
+        <a href="#" class="btn_txt" onclick="openPopup('popup_regist')">還沒有帳戶？點此註冊</a>
+    </div>
+    <div class="popup" id="popup_regist">
+        <span></span>
+        <a href="#" class="btn_esc" onclick="closePopup(this)"><img src="http://127.0.0.1:3000/static/images/esc.svg"
+                alt=""></a>
+        <p class="title">註冊會員帳號</p>
+        <input type="text" placeholder="輸入姓名">
+        <input type="text" placeholder="輸入電子信箱">
+        <input type="text" placeholder="輸入密碼">
+        <button>註冊新帳號</button>
+        <a href="#" class="btn_txt" onclick="openPopup('popup_login')">已經有帳戶了？點此登入</a>
+    </div>
+    <div class="pagecover" onclick="closePopup(this)"></div>
+
+    <script>
+        let location_href=location.href.split("/");
+        let attraction_id= location_href[location_href.length-1]
+        console.log(attraction_id);
+        apiAttraction(attraction_id);
+
+        function openPopup(id) {
+            console.log(id);
+            if (document.body.classList.contains("open_popup")) {
+                for (let i = 0; i < document.getElementsByClassName("popup").length; i++) {
+                    document.getElementsByClassName("popup")[i].classList.remove("show");
+                }
+            } else {
+                document.body.classList.add("open_popup");
+            }
+            document.getElementById(id).classList.add("show");
+
+        }
+
+        function closePopup(e) {
+            if (e.classList.contains("pagecover")) {
+                for (let i = 0; i < document.getElementsByClassName("popup").length; i++) {
+                    document.getElementsByClassName("popup")[i].classList.remove("show");
+                }
+            } else {
+                e.parentElement.classList.remove("show");
+            }
+            document.body.classList.remove("open_popup");
+        }
+
+        function apiAttraction(id) {
+            // src = "http://3.18.227.207:3000/api/attraction/"+ id;
+            src = "http://127.0.0.1:3000/api/attraction/"+ id;
+        
+            fetch(src).then(function (response) {
+                return response.json();//取回的字串已轉成json
+            }).then(function (result) {
+                console.log(result);
+                
+            });
+
+        }
+
+
+    </script>
+</body>
+
+</html>

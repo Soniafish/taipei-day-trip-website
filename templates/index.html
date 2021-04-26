@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css">
+    <title>Taipei-TRIP</title>
+</head>
+<body>
+    <header>
+        <div class="header_top container">
+            <h1>台北一日遊</h1>
+            <div>
+                <a href="javascript:void(0);" class="btn_txt">預定行程</a>
+                <a href="javascript:void(0);" class="btn_txt" onclick="openPopup('popup_login')">登入/註冊</a>
+            </div>
+        </div>
+    </header>
+    <div class="maincontent">
+        <div class="header_bottom">
+            <div class="container">
+                <h2>享受台北一日悠遊</h2>
+                <p>探索每個角落，體驗城市的深度旅遊行程</p>
+                <div class="search_wrap">
+                    <input type="text" placeholder="輸入景點名稱查詢" id="searchAttractions"><button onclick="searchAttractions()"><img
+                            src="http://127.0.0.1:3000/static/images/search.svg" alt="search"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container" id="attrationsList_wrap">
+            <div class="attrations_list" id="attrations_list">
+            <!-- <div class="attrationBox">
+                    <a href="http://127.0.0.1:3000/attraction.html">
+                        <img src="http://127.0.0.1:3000/static/images/empty.png" style="background-image:url('http://via.placeholder.com/600x600')" alt="" width="100%">
+                    </a>
+                    <p class="attrationBox_name">平安鐘</p>
+                    <p class="attrationBox_info">
+                        <span>忠孝復興</span>
+                        <span>公共藝術</span>
+                    </p>
+                </div>
+        
+                <div class="attrationBox">
+                    <a href="http://127.0.0.1:3000/attraction.html">
+                        <img src="http://127.0.0.1:3000/static/images/empty.png"
+                            style="background-image:url('http://via.placeholder.com/600x600')" alt="" width="100%">
+                    </a>
+                    <p class="attrationBox_name">平安鐘</p>
+                    <p class="attrationBox_info">
+                        <span>忠孝復興</span>
+                        <span>公共藝術</span>
+                    </p>
+                </div>
+        
+                <div class="attrationBox">
+                    <a href="http://127.0.0.1:3000/attraction.html">
+                        <img src="http://127.0.0.1:3000/static/images/empty.png"
+                            style="background-image:url('http://via.placeholder.com/600x600')" alt="" width="100%">
+                    </a>
+                    <p class="attrationBox_name">平安鐘</p>
+                    <p class="attrationBox_info">
+                        <span>忠孝復興</span>
+                        <span>公共藝術</span>
+                    </p>
+                </div>
+        
+                <div class="attrationBox">
+                    <a href="http://127.0.0.1:3000/attraction.html">
+                        <img src="http://127.0.0.1:3000/static/images/empty.png"
+                            style="background-image:url('http://via.placeholder.com/600x600')" alt="" width="100%">
+                    </a>
+                    <p class="attrationBox_name">平安鐘</p>
+                    <p class="attrationBox_info">
+                        <span>忠孝復興</span>
+                        <span>公共藝術</span>
+                    </p>
+                </div>
+        
+                <div class="attrationBox">
+                    <a href="http://127.0.0.1:3000/attraction.html">
+                        <img src="http://127.0.0.1:3000/static/images/empty.png"
+                            style="background-image:url('http://via.placeholder.com/600x600')" alt="" width="100%">
+                    </a>
+                    <p class="attrationBox_name">平安鐘</p>
+                    <p class="attrationBox_info">
+                        <span>忠孝復興</span>
+                        <span>公共藝術</span>
+                    </p>
+                </div> -->
+        </div>
+        </div>
+        
+        <!-- <button onclick="loadMore()" id="btn_loadMore">Load More</button> -->
+
+    </div>
+    
+    <footer>COPYRIGHT © 2021 台北一日遊</footer>
+
+    <div class="popup" id="popup_login">
+        <span></span>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="http://127.0.0.1:3000/static/images/esc.svg" alt=""></a>
+        <p class="title">登入會員帳號</p>
+        <input type="text" placeholder="輸入電子信箱">
+        <input type="text" placeholder="輸入密碼">
+        <button>登入帳號</button>
+        <a href="javascript:void(0);" class="btn_txt" onclick="openPopup('popup_regist')">還沒有帳戶？點此註冊</a>
+    </div>
+    <div class="popup" id="popup_regist">
+        <span></span>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="http://127.0.0.1:3000/static/images/esc.svg" alt=""></a>
+        <p class="title">註冊會員帳號</p>
+        <input type="text" placeholder="輸入姓名">
+        <input type="text" placeholder="輸入電子信箱">
+        <input type="text" placeholder="輸入密碼">
+        <button>註冊新帳號</button>
+        <a href="javascript:void(0);" class="btn_txt" onclick="openPopup('popup_login')">已經有帳戶了？點此登入</a>
+    </div>
+    <div class="pagecover" onclick="closePopup(this)"></div>
+
+    <script>
+        let currentKeyword="all";
+        let nextPage=0;
+        let currentPage=0;
+        
+        apiAttractions(currentKeyword, currentPage);
+        
+        window.addEventListener('scroll', scrollEvent);
+
+        function openPopup(id) {
+            // console.log(id);
+            if(document.body.classList.contains("open_popup")){
+                for (let i = 0; i < document.getElementsByClassName("popup").length; i++) {
+                    document.getElementsByClassName("popup")[i].classList.remove("show"); 
+                }
+            }else{
+                document.body.classList.add("open_popup");
+            }
+            document.getElementById(id).classList.add("show");  
+            
+        }
+
+        function closePopup(e) {
+            if(e.classList.contains("pagecover")){
+                for (let i = 0; i < document.getElementsByClassName("popup").length; i++) {
+                    document.getElementsByClassName("popup")[i].classList.remove("show");
+                }
+            }else{
+                e.parentElement.classList.remove("show");
+            }
+            document.body.classList.remove("open_popup");
+        }
+
+        function searchAttractions(){
+            let keyword = document.getElementById('searchAttractions').value;
+            if(keyword==''){
+                alert("請輸入欲搜尋的景點");
+            }else{
+                currentKeyword = keyword;
+                nextPage = 0;
+                currentPage = 0;
+
+                //清除舊畫面
+                let list = document.getElementById("attrations_list")
+                list.remove();
+                let new_attrationsList = document.createElement("div");
+                new_attrationsList.classList.add("attrations_list");
+                new_attrationsList.setAttribute("id", "attrations_list");
+                document.getElementById("attrationsList_wrap").appendChild(new_attrationsList);
+
+                apiAttractions(keyword, currentPage);
+            }
+                        
+        }
+
+        function apiAttractions(keyword, page) {
+            let src="";
+            if (keyword == 'all') {
+                // src = "http://3.18.227.207:3000/api/attractions?page=" + page;
+                src = "http://127.0.0.1:3000/api/attractions?page=" + page;
+            } else {
+                // src = "http://3.18.227.207:3000/api/attractions?page="+ page+"&keyword="+keyword;
+                src = "http://127.0.0.1:3000/api/attractions?page=" + page + "&keyword=" + keyword;
+            }
+
+            fetch(src).then(function (response) {
+                return response.json();//取回的字串已轉成json
+            }).then(function (result) {
+                // console.log(result);
+                nextPage = result.nextPage;
+
+                if(result.data.length!==0){
+
+                    //畫畫面
+                    let attrations_list = document.getElementById("attrations_list");
+                    for (let i = 0; i < result.data.length; i++) {
+                        let attrationHref = "http://127.0.0.1:3000/attraction/"+result.data[i].id;
+                        let imgSrc = result.data[i].images[0];
+                        let attrationName = result.data[i].name;
+                        let attractionMrt = result.data[i].mrt;
+                        let attractionCategory = result.data[i].category
+
+                        let attrationBox = document.createElement('div');
+                        attrationBox.classList.add("attrationBox");
+
+                        let attrationBoxImgLink = document.createElement('a');
+                        attrationBoxImgLink.href= attrationHref;
+
+                        let attrationBoxImg = document.createElement('img');
+                        attrationBoxImg.src = "http://127.0.0.1:3000/static/images/empty.png";
+                        attrationBoxImg.style.backgroundImage = "url(" + imgSrc + ")";
+                    
+                        attrationBoxImg.alt = attrationName;
+
+                        attrationBoxImgLink.appendChild(attrationBoxImg);
+
+                        let attrationBox_name = document.createElement('div');
+                        attrationBox_name.appendChild(document.createTextNode(attrationName));
+                        attrationBox_name.classList.add("attrationBox_name");
+
+                        let attrationBox_info = document.createElement('div');
+                        attrationBox_info.classList.add("attrationBox_info");
+
+                        let span1 = document.createElement('span');
+                        span1.appendChild(document.createTextNode(attractionMrt));
+
+                        let span2 = document.createElement('span');
+                        span2.appendChild(document.createTextNode(attractionCategory));
+
+                        attrationBox_info.appendChild(span1);
+                        attrationBox_info.appendChild(span2);
+
+                        attrationBox.appendChild(attrationBoxImgLink);
+                        attrationBox.appendChild(attrationBox_name);
+                        attrationBox.appendChild(attrationBox_info);
+
+                        attrations_list.appendChild(attrationBox);
+                    }
+                    
+                }else{
+                    //畫畫面
+                    let attrations_list = document.getElementById("attrations_list");
+                    let txt=document.createElement("p");
+                    txt.classList.add("txt");
+                    txt.appendChild(document.createTextNode("查無相關景點"));
+                    txt = attrations_list.appendChild(txt);
+                }
+
+            });
+        }
+
+        function scrollEvent() {
+            // console.log("開始偵測捲軸");
+            let list_bottom = document.getElementById("attrations_list").getBoundingClientRect().bottom;
+            console.log(window.scrollY + ", " + document.getElementById("attrations_list").getBoundingClientRect().bottom);
+            if (list_bottom < window.screen.height) {
+                // console.log("go bottom");
+                loadMore();
+            }
+        }
+
+        function loadMore(){
+            currentPage = nextPage;
+            nextPage = null;
+            apiAttractions(currentKeyword, currentPage);
+        }
+
+    </script>
+</body>
+</html>

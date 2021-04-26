@@ -33,7 +33,7 @@ cnnt=db_connect()
 # 建立Cursor物件
 cursor=cnnt.cursor()
 
-cursor.execute("create database tripWebsite")
+# cursor.execute("create database tripWebsite")
 cursor.execute("use tripWebsite")
 cursor.execute("create table taipeiAttrations(id bigint PRIMARY KEY, name VARCHAR(255) NOT NULL, category VARCHAR(255) NOT NULL, description TEXT NOT NULL, address VARCHAR(255) NOT NULL, mrt VARCHAR(255), transport TEXT, images TEXT NOT NULL, latitude FLOAT, longitude FLOAT, postDate datetime NOT NULL)")
 
