@@ -319,6 +319,11 @@ footer{
     .header_top .btn_txt{
         margin-left: 5px;
     }
+    .header_bottom .container{
+        background-size: 357px;
+        background-position-x: calc(100% + 96px);
+        background-position-y: bottom;
+    }
     .header_bottom input{
         width: 230px;
     }
