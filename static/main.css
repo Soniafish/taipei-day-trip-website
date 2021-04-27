@@ -48,10 +48,25 @@ table {
 }
 
 /* start my css */
+@font-face {
+    font-family: "Noto Sans TC";
+    src: url(/static/fonts/NotoSansTC-Regular.otf);
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Noto Sans TC";
+    src: url(/static/fonts/NotoSansTC-Bold.otf);
+    font-weight: 700;
+    font-display: swap;
+}
+
 body, *{
     font-family: "Noto Sans TC";
+    font-weight: normal;
     font-size: 16px;
     box-sizing: border-box;
+    color: #757575;
 }
 body.open_popup .pagecover{
     display: block;
@@ -79,7 +94,7 @@ header{
 }
 .header_top h1{
     color: #448899;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 30px;
     line-height: 34px;
 }
@@ -102,7 +117,7 @@ header{
     background: url(images/welcome.svg) no-repeat right center;
 }
 .header_bottom h2{
-    font-weight: bold;
+    font-weight: 700;
     font-size: 28px;
     line-height: 42px;
     color: #f8f8f8;
@@ -196,7 +211,7 @@ footer{
 .popup .title{
     text-align: center;
     font-size: 24px;
-    font-weight: bold;
+    font-weight: 700;
     margin-bottom: 15px;
 }
 .popup input{
@@ -242,7 +257,6 @@ footer{
     width: 100%;
     font-size: 18px;
     text-align: center;
-    color: #757575;
 }
 .attrationBox{
     width: calc((100% - 3*30px) / 4);
@@ -263,8 +277,7 @@ footer{
 }
 .attrationBox_name{
     padding: 10px;
-    font-weight: bold;
-    color: #757575;
+    font-weight: 700;
 }
 .attrationBox_info{
     padding: 10px;
@@ -352,7 +365,7 @@ footer{
 .attration_trip h1{
     font-size: 24px;
     line-height: 24px;
-    font-weight: bold;
+    font-weight: 700;
     color: #666;
     margin-bottom: 15px;
 }
@@ -368,7 +381,7 @@ footer{
     margin-bottom: 15px;
 }
 .attration_trip_info .title{
-    font-weight: bold;
+    font-weight: 700;
 }
 .attration_trip_info button{
     color: #fff;
@@ -389,7 +402,7 @@ footer{
     margin-bottom: 20px;
 }
 .attration_info .title{
-    font-weight: bold;
+    font-weight: 700;
 }
 @media screen and (max-width: 768px) {
     .attration_wrap{

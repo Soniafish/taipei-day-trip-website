@@ -92,8 +92,6 @@
                 </div> -->
         </div>
         </div>
-        
-        <!-- <button onclick="loadMore()" id="btn_loadMore">Load More</button> -->
 
     </div>
     
@@ -120,6 +118,7 @@
     </div>
     <div class="pagecover" onclick="closePopup(this)"></div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-infinitescroll/3.0.3/infinite-scroll.pkgd.min.js"></script>
     <script>
         let currentKeyword="all";
         let nextPage=0;
@@ -176,19 +175,19 @@
         }
 
         function apiAttractions(keyword, page) {
-            let src="";
+            let src = "";
             if (keyword == 'all') {
                 // src = "http://3.18.227.207:3000/api/attractions?page=" + page;
                 src = "http://127.0.0.1:3000/api/attractions?page=" + page;
             } else {
-                // src = "http://3.18.227.207:3000/api/attractions?page="+ page+"&keyword="+keyword;
+                // src = "http://3.18.227.207:3000/api/attractions?page=" + page+"&keyword=" + keyword;
                 src = "http://127.0.0.1:3000/api/attractions?page=" + page + "&keyword=" + keyword;
             }
 
             fetch(src).then(function (response) {
                 return response.json();//取回的字串已轉成json
             }).then(function (result) {
-                // console.log(result);
+                console.log(result.data);
                 nextPage = result.nextPage;
 
                 if(result.data.length!==0){
@@ -240,10 +239,11 @@
                         attrations_list.appendChild(attrationBox);
                     }
                     
+                    window.addEventListener('scroll', scrollEvent);
                 }else{
                     //畫畫面
                     let attrations_list = document.getElementById("attrations_list");
-                    let txt=document.createElement("p");
+                    let txt = document.createElement("p");
                     txt.classList.add("txt");
                     txt.appendChild(document.createTextNode("查無相關景點"));
                     txt = attrations_list.appendChild(txt);
@@ -253,19 +253,22 @@
         }
 
         function scrollEvent() {
-            // console.log("開始偵測捲軸");
+            console.log("開始偵測捲軸");
             let list_bottom = document.getElementById("attrations_list").getBoundingClientRect().bottom;
             console.log(window.scrollY + ", " + document.getElementById("attrations_list").getBoundingClientRect().bottom);
-            if (list_bottom < window.screen.height) {
+            if (list_bottom < window.innerHeight) {//window.screen.height
                 // console.log("go bottom");
                 loadMore();
+                window.removeEventListener('scroll', scrollEvent);
             }
         }
 
         function loadMore(){
-            currentPage = nextPage;
-            nextPage = null;
-            apiAttractions(currentKeyword, currentPage);
+            if(nextPage!==null){
+                currentPage = nextPage;
+                apiAttractions(currentKeyword, currentPage);
+            }
+            
         }
 
     </script>
