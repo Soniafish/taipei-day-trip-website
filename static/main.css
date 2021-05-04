@@ -83,7 +83,7 @@ header{
     z-index: 2;
     width: 100%;
     background-color: #fff;
-    box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.5);
+    box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.3);
 }
 .header_top{
     display: flex;
@@ -180,7 +180,6 @@ footer{
     display: none;
     position: fixed;
     z-index: 10;
-    /* position: relative; */
     top: 20vh;
     left: calc((100% - 340px) / 2);
     text-align: center;
@@ -339,12 +338,14 @@ footer{
 
 /*attration.html*/
 .attration_wrap{
+    margin-top: 37px;
     display: flex;
     justify-content: space-between;
     padding-bottom: 35px;
 }
 .attration_img{
-    width: 45%;
+    /* width: 45%; */
+    width: 540px;
     position: relative;
 }
 .attration_img .btn_prev{
@@ -357,6 +358,33 @@ footer{
     right: 10px;
     top: calc((100% - 36px) / 2);
 }
+.attration_img .btn_dot{
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+}
+.attration_img .btn_dot li{
+    position: relative;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    border-radius: 50%;
+    margin: 0 3px;
+    cursor: pointer;
+}
+.attration_img .btn_dot li.active:after{
+    content: "";
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: #000;
+    border-radius: 50%;
+}
 .attration_img >img{
     display: block;
     width: 100%;
@@ -365,28 +393,60 @@ footer{
     background-size: cover;
 }
 .attration_trip{
-    width: 50%;
+    /* width: 50%; */
+    width: calc(100% - 540px - 30px);
 }
 .attration_trip h1{
     font-size: 24px;
-    line-height: 24px;
+    line-height: 33px;
     font-weight: 700;
     color: #666;
     margin-bottom: 15px;
 }
+.attration_trip_category{
+    line-height: 22px;
+    margin-bottom: 20px;
+}
 .attration_trip_info{
-    margin-top: 20px;
-    padding: 15px;
+    padding: 20px 15px 35px 15px;
     color: #666;
     background-color: #ebebeb;
     border-radius: 5px;
-    line-height: 21px;
+    line-height: 22px;
 }
 .attration_trip_info p, .attration_trip_info div{
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 .attration_trip_info .title{
     font-weight: 700;
+}
+.attration_trip_check{
+    vertical-align: middle;
+}
+.attration_trip_check input[type='radio']{
+    opacity: 0;
+}
+.attration_trip_check input[type='radio']+span{
+    display: inline-block;
+    position: relative;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #fff;
+    margin-left: -15px;
+    margin-right: 5px;
+    vertical-align: top;
+}
+.attration_trip_check input[type='radio']:checked+span:after{
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    display: block;
+    content: "";
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #448899;
 }
 .attration_trip_info button{
     color: #fff;
@@ -409,8 +469,10 @@ footer{
 .attration_info .title{
     font-weight: 700;
 }
-@media screen and (max-width: 768px) {
+
+@media screen and (max-width: 1007px) {
     .attration_wrap{
+        margin-top: 0;
         display: block;
     }
     .attration_img{

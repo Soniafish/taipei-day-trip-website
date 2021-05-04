@@ -252,9 +252,9 @@
         }
 
         function scrollEvent() {
-            console.log("開始偵測捲軸");
+            // console.log("開始偵測捲軸");
             let list_bottom = document.getElementById("attrations_list").getBoundingClientRect().bottom;
-            console.log(window.scrollY + ", " + document.getElementById("attrations_list").getBoundingClientRect().bottom);
+            // console.log(window.scrollY + ", " + document.getElementById("attrations_list").getBoundingClientRect().bottom);
             if (list_bottom < window.innerHeight) {//window.screen.height
                 // console.log("go bottom");
                 loadMore();
