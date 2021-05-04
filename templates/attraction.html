@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="http://3.18.227.207:3000/static/main.css"> -->
-    <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css">
+    <link rel="stylesheet" href="http://3.18.227.207:3000/static/main.css">
+    <!-- <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css"> -->
     <title>Taipei-TRIP</title>
 </head>
 
@@ -25,8 +25,8 @@
             <div class="attration_img">
                 <a href="javascript:void(0);" class="btn_prev" onclick="attrationImg_prev()"><img src="http://3.18.227.207:3000/static/images/prev.svg" alt="prev"></a>
                 <a href="javascript:void(0);" class="btn_next" onclick="attrationImg_next()"><img src="http://3.18.227.207:3000/static/images/next.svg" alt="next"></a>
-                <!-- <img id="attration_img" data-idx="0" src="http://3.18.227.207:3000/static/images/empty2.png" style="background-image:url('http://3.18.227.207:3000/static/images/empty2.png')" alt="" width="100%"> -->
-                <img id="attration_img" data-idx="0" src="http://127.0.0.1:3000/static/images/empty2.png" style="background-image:url('http://127.0.0.1:3000/static/images/empty2.png')" alt="" width="100%">
+                <img id="attration_img" data-idx="0" src="http://3.18.227.207:3000/static/images/empty2.png" style="background-image:url('http://3.18.227.207:3000/static/images/empty2.png')" alt="" width="100%">
+                <!-- <img id="attration_img" data-idx="0" src="http://127.0.0.1:3000/static/images/empty2.png" style="background-image:url('http://127.0.0.1:3000/static/images/empty2.png')" alt="" width="100%"> -->
                 <ul class="btn_dot"></ul>
             </div>
             <div class="attration_trip">
@@ -125,8 +125,8 @@
         }
 
         function apiAttraction(id) {
-            // src = "http://3.18.227.207:3000/api/attraction/"+ id;
-            src = "http://127.0.0.1:3000/api/attraction/"+ id;
+            src = "http://3.18.227.207:3000/api/attraction/"+ id;
+            // src = "http://127.0.0.1:3000/api/attraction/"+ id;
         
             fetch(src).then(function (response) {
                 return response.json();//取回的字串已轉成json
