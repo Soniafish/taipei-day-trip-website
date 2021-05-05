@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="http://3.18.227.207:3000/static/main.css"> -->
-    <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css">
+    <link rel="stylesheet" href="http://3.18.227.207:3000/static/main.css">
+    <!-- <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css"> -->
     <title>Taipei-TRIP</title>
 </head>
 <body>
@@ -176,11 +176,11 @@
         function apiAttractions(keyword, page) {
             let src = "";
             if (keyword == 'all') {
-                // src = "http://3.18.227.207:3000/api/attractions?page=" + page;
-                src = "http://127.0.0.1:3000/api/attractions?page=" + page;
+                src = "http://3.18.227.207:3000/api/attractions?page=" + page;
+                // src = "http://127.0.0.1:3000/api/attractions?page=" + page;
             } else {
-                // src = "http://3.18.227.207:3000/api/attractions?page=" + page+"&keyword=" + keyword;
-                src = "http://127.0.0.1:3000/api/attractions?page=" + page + "&keyword=" + keyword;
+                src = "http://3.18.227.207:3000/api/attractions?page=" + page+"&keyword=" + keyword;
+                // src = "http://127.0.0.1:3000/api/attractions?page=" + page + "&keyword=" + keyword;
             }
 
             fetch(src).then(function (response) {
@@ -194,8 +194,8 @@
                     //畫畫面
                     let attrations_list = document.getElementById("attrations_list");
                     for (let i = 0; i < result.data.length; i++) {
-                        // let attrationHref = "http://3.18.227.207:3000/attraction/" + result.data[i].id;
-                        let attrationHref = "http://127.0.0.1:3000/attraction/"+result.data[i].id;
+                        let attrationHref = "http://3.18.227.207:3000/attraction/" + result.data[i].id;
+                        // let attrationHref = "http://127.0.0.1:3000/attraction/"+result.data[i].id;
                         let imgSrc = result.data[i].images[0];
                         let attrationName = result.data[i].name;
                         let attractionMrt = result.data[i].mrt;
