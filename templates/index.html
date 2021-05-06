@@ -118,6 +118,8 @@
     </div>
     <div class="pagecover" onclick="closePopup(this)"></div>
 
+    <script type="text/javascript" src="http://3.18.227.207:3000/static/config.js"></script>
+    <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/config.js"></script> -->
     <script>
         let currentKeyword="all";
         let nextPage=0;
@@ -176,11 +178,14 @@
         function apiAttractions(keyword, page) {
             let src = "";
             if (keyword == 'all') {
-                src = "http://3.18.227.207:3000/api/attractions?page=" + page;
+                // src = "http://3.18.227.207:3000/api/attractions?page=" + page;
                 // src = "http://127.0.0.1:3000/api/attractions?page=" + page;
+                src = config.url + "api/attractions?page=" + page;
             } else {
-                src = "http://3.18.227.207:3000/api/attractions?page=" + page+"&keyword=" + keyword;
+                // src = "http://3.18.227.207:3000/api/attractions?page=" + page+"&keyword=" + keyword;
                 // src = "http://127.0.0.1:3000/api/attractions?page=" + page + "&keyword=" + keyword;
+                src = config.url + "api/attractions?page=" + page + "&keyword=" + keyword;
+
             }
 
             fetch(src).then(function (response) {
@@ -194,8 +199,9 @@
                     //畫畫面
                     let attrations_list = document.getElementById("attrations_list");
                     for (let i = 0; i < result.data.length; i++) {
-                        let attrationHref = "http://3.18.227.207:3000/attraction/" + result.data[i].id;
-                        // let attrationHref = "http://127.0.0.1:3000/attraction/"+result.data[i].id;
+                        // let attrationHref = "http://3.18.227.207:3000/attraction/" + result.data[i].id;
+                        // let attrationHref = "http://127.0.0.1:3000/attraction/" + result.data[i].id;
+                        let attrationHref = config.url + "attraction/"+result.data[i].id;
                         let imgSrc = result.data[i].images[0];
                         let attrationName = result.data[i].name;
                         let attractionMrt = result.data[i].mrt;
