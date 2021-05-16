@@ -76,6 +76,13 @@ body.open_popup .pagecover{
     padding: 0 20px;
     margin: 0 auto;
 }
+.error{
+    display: block;
+    font-size: 13px;
+    color: red;
+    text-align: left;
+    padding-bottom: 10px;
+}
 header{
     position: fixed;
     top: 0;
@@ -107,6 +114,12 @@ header{
 }
 .header_top .btn_txt:hover{
     text-decoration: underline;
+}
+#signinToPopup, #signout{
+    display: none;
+}
+#signinToPopup.show, #signout.show{
+    display: inline-block;
 }
 .header_bottom{
     background: linear-gradient(135deg, #AADDEE 0%, #66AABB 100%);
@@ -245,6 +258,10 @@ footer{
 }
 .popup .btn_txt:hover{
     text-decoration: underline;
+}
+#popup_loginMessage, #popup_registMessage{
+    color: blue;
+    padding-bottom: 10px;
 }
 .attrations_list{
     display: flex;
@@ -459,7 +476,7 @@ footer{
 .attration_info{
     border-top: 1px solid #e8e8e8;
     color: #666;
-    line-height: 24px;
+    line-height: 28px;
     padding-top: 50px;
     margin-bottom: 120px;
 }

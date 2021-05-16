@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask import *
 import json
 import pymysql
+import routes.attraction as attraction_api
 
 load_dotenv()
 os.environ
@@ -40,6 +41,8 @@ app=Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
 # Pages
 @app.route("/")
 def index():
@@ -55,148 +58,145 @@ def thankyou():
 	return render_template("thankyou.html")
 
 
-
 @app.route("/api/attractions", methods=["GET"])
-def getAttractions():
+def handleAttractions():
 	page=request.args.get("page", 0)  #預設page值為0
 	page=int(page)
 	keyword=request.args.get("keyword", "")  #預設keyword值為""
 	# print(page)
 	# print(keyword)
-	statement=""
-	p_idx = 12 * page
-	p_count = 12
-	nextPage = page+1
+	return attraction_api.getAttractions(page, keyword, cursor)
 	
-	if keyword=="":
-		cursor.execute("select count(*) from taipeiAttrations")
-		count=cursor.fetchone()
-		print(count[0])
-		if count[0] < p_idx:
-			return Response(
-				response=json.dumps({
-					"nextPage": None,
-					"data": []
-					}),
-				status=200,
-				content_type='application/json'
-			)
-		elif count[0] <  12 * (page + 1):
-			p_count = count[0] % 12
-			nextPage = None
-			print("p_count:", p_count)
-		statement=f"select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations order by id limit {p_idx},{p_count}"
-	else:
-		cursor.execute("select count(*) from taipeiAttrations where name like '%"+keyword+"%'")
-		count=cursor.fetchone()
-		print(count[0])
-		if count[0] <  12 * (page + 1):
-			p_count = count[0] % 12
-			nextPage = None
-			print("p_count:", p_count)
-		statement ="select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations where name like '%"+keyword+f"%' order by id limit {p_idx},{p_count}"
-	print(statement)
-	
-	result=cursor.execute(statement)
-	# print(result)
-	if result:   
-		filterData=cursor.fetchall()   #取得景點
-
-		# print(filterData)
-		data=[]
-		for item in filterData:
-			images=item[9].split(",")
-			data.append({
-				"id": item[0],
-				"name": item[1],
-				"category": item[2],
-				"description": item[3],
-				"address": item[4],
-				"transport": item[5],
-				"mrt": item[6],
-				"latitude": item[7],
-				"longitude": item[8],
-				"images": images[0: -1]
-			})
-
-			print(data[0]["images"])
-		return Response(
-				response=json.dumps({
-					"nextPage": nextPage,
-					"data": data
-					}),
-				status=200,
-				content_type='application/json'
-			)
-
-	else:
-		return Response(
-				response=json.dumps({
-					"nextPage": None,
-					"data": []
-					}),
-				status=200,
-				content_type='application/json'
-			)
-	
-	
-	return Response(
-				response=json.dumps({
-					"error": true,
-					"message": "系統錯誤"
-					}),
-				status=500,
-				content_type='application/json'
-			)
-
-
 @app.route("/api/attraction/<attractionId>", methods=["GET"])
-def getAttraction(attractionId):
+def handleAttraction(attractionId):
 	# attractionId=int(attractionId)
-	print(type(attractionId))
-	statement=f"select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations where id={attractionId}"
-	result=cursor.execute(statement)
-	if result:
-		filterData=cursor.fetchone()
-		# print(filterData)
-		images=filterData[9].split(",")
-		data={
-			"id": filterData[0],
-			"name": filterData[1],
-			"category": filterData[2],
-			"description": filterData[3],
-			"address": filterData[4],
-			"transport": filterData[5],
-			"mrt": filterData[6],
-			"latitude": filterData[7],
-			"longitude": filterData[8],
-			"images": images[0: -1]
-		}
-		# print(data)
-		return Response(
-				response=json.dumps({"data": data}),
-				status=200,
-				content_type='application/json'
-			)
+	# print(type(attractionId))
+	return attraction_api.getAttraction(attractionId, cursor)
 
-	else:
-		return Response(
-				response=json.dumps({
-					"error": "true",
-					"message": "景點編號不正確"
-				}),
-				status=400,
-				content_type='application/json'
-			)
 
-	return Response(
-				response=json.dumps({
-					"error": "true",
-					"message": "系統錯誤"
-				}),
-				status=500,
-				content_type='application/json'
-			)
+@app.route("/api/user", methods=["POST"]) #註冊
+def handel_signup():
+    try:
+        insertValues=request.get_json()
+        userName=insertValues["name"]
+        userEmail=insertValues["email"]
+        userPW=insertValues["password"]
+
+        # 篩選資料表的資料
+        result=cursor.execute("SELECT * FROM user where email='"+userEmail+"'")
+        if result: # 註冊失敗:即資料表已有該使用者帳號
+                return Response(
+                        response=json.dumps({
+                            "error": True,
+                            "message": "註冊失敗，重複的Email或其他原因"
+                        }),
+                        status=200,
+                        content_type='application/json'
+                    )
+            
+        # 註冊成功：即資料表無該使用者帳號
+        cursor.execute("INSERT INTO user(name, email, password)VALUES('" + userName + "','" + userEmail + "', '" + userPW + "')")
+        cnnt.commit()
+        return Response(
+                        response=json.dumps({"ok": True}),
+                        status=200,
+                        content_type='application/json'
+                    ) 
+    except Exception as e:
+        print(e) 
+        return Response(
+                    response=json.dumps({
+                        "error": True,
+                        "message": "系統錯誤"
+                    }),
+                    status=500,
+                    content_type='application/json'
+                )
+
+
+@app.route("/api/user", methods=["PATCH"]) #登入
+def handel_signin():
+    try:
+        insertValues=request.get_json()
+        userEmail=insertValues["email"]
+        userPW=insertValues["password"]
+        # print("select * from user where email='"+userEmail+"' and password='"+userPW+"'")
+        # 篩選資料表的資料
+        result=cursor.execute("select * from user where email='"+userEmail+"' and password='"+userPW+"'")
+        # print(result)
+        if result:   # 登入成功：即帳號/密碼皆存在資料表
+            select_data=cursor.fetchone()   #取得使用者資料
+            session["userId"] = select_data[0]
+            session["userName"] = select_data[1]
+            session["userEmail"] = select_data[2]
+
+            return Response(
+                    response=json.dumps({"ok": True}),
+                    status=200,
+                    content_type='application/json'
+                )
+        
+        # 登入失敗：即帳號或密碼不存在資料表
+        return Response(
+                    response=json.dumps({
+                        "error": True,
+                        "message": "帳號或密碼輸入錯誤"
+                    }),
+                    status=400,
+                    content_type='application/json'
+                )
+    except Exception as e:
+        print(e) 
+        return Response(
+                    response=json.dumps({
+                        "error": True,
+                        "message": "系統錯誤"
+                    }),
+                    status=500,
+                    content_type='application/json'
+                )
+
+
+@app.route("/api/user", methods=["GET"]) #取得使用者資訊
+def handel_userinfo():
+    if "userId" in session:
+        # print(session)
+        return Response(
+                    response=json.dumps({
+                        "data": {
+                            "id": session["userId"],
+                            "name": session["userName"],
+                            "email": session["userEmail"]
+                        }
+                    }),
+                    status=200,
+                    content_type='application/json'
+                )
+    else:
+        return "null"
+        
+
+@app.route("/api/user", methods=["DELETE"]) #登出
+def handel_signout():
+    if "userId" in session:
+        session.pop('userId', None)
+        session.pop('userName', None)
+        session.pop('userEmail', None)
+        return Response(
+                    response=json.dumps({"ok": True}),
+                    status=200,
+                    content_type='application/json'
+                )
+    else:
+        return Response(
+                    response=json.dumps({
+                        "error": True,
+                        "message": "系統錯誤"
+                    }),
+                    status=500,
+                    content_type='application/json'
+                )
+
 
 
 if (os.environ['localdebug']=='true'):

@@ -15,8 +15,9 @@
         <div class="header_top container">
             <h1>台北一日遊</h1>
             <div>
-                <a href="#" class="btn_txt">預定行程</a>
-                <a href="#" class="btn_txt" onclick="openPopup('popup_login')">登入/註冊</a>
+                <a href="javascript:void(0);" class="btn_txt">預定行程</a>
+                <a href="javascript:void(0);" class="btn_txt" id="signinToPopup" onclick="openPopup('popup_login')">登入/註冊</a>
+                <a href="javascript:void(0);" class="btn_txt" id="signout" onclick="signout()">登出系統</a>
             </div>
         </div>
     </header>
@@ -26,7 +27,6 @@
                 <a href="javascript:void(0);" class="btn_prev" onclick="attrationImg_prev()"><img src="http://3.18.227.207:3000/static/images/prev.svg" alt="prev"></a>
                 <a href="javascript:void(0);" class="btn_next" onclick="attrationImg_next()"><img src="http://3.18.227.207:3000/static/images/next.svg" alt="next"></a>
                 <img id="attration_img" data-idx="0" src="http://3.18.227.207:3000/static/images/empty2.png" style="background-image:url('http://3.18.227.207:3000/static/images/empty2.png')" alt="" width="100%">
-                <!-- <img id="attration_img" data-idx="0" src="http://127.0.0.1:3000/static/images/empty2.png" style="background-image:url('http://127.0.0.1:3000/static/images/empty2.png')" alt="" width="100%"> -->
                 <ul class="btn_dot"></ul>
             </div>
             <div class="attration_trip">
@@ -64,27 +64,49 @@
 
     <div class="popup" id="popup_login">
         <span></span>
-        <a href="#" class="btn_esc" onclick="closePopup(this)"><img src="http://3.18.227.207:3000/static/images/esc.svg"
-                alt=""></a>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img
+                src="http://3.18.227.207:3000/static/images/esc.svg" alt=""></a>
         <p class="title">登入會員帳號</p>
-        <input type="text" placeholder="輸入電子信箱">
-        <input type="text" placeholder="輸入密碼">
-        <button>登入帳號</button>
-        <a href="#" class="btn_txt" onclick="openPopup('popup_regist')">還沒有帳戶？點此註冊</a>
+        <div>
+            <input type="email" name="useremail" placeholder="輸入電子信箱" id="login_useremail">
+            <span class="error" id="error_login_useremail"></span>
+        </div>
+        <div>
+            <input type="password" name="userpw" placeholder="輸入密碼" id="login_userpw">
+            <span class="error" id="error_login_userpw"></span>
+        </div>
+        <button onclick="signin()">登入帳號</button>
+        <p id="popup_loginMessage"></p>
+        <a href="javascript:void(0);" class="btn_txt" onclick="openPopup('popup_regist')">還沒有帳戶？點此註冊</a>
     </div>
     <div class="popup" id="popup_regist">
         <span></span>
-        <a href="#" class="btn_esc" onclick="closePopup(this)"><img src="http://3.18.227.207:3000/static/images/esc.svg"
-                alt=""></a>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img
+                src="http://3.18.227.207:3000/static/images/esc.svg" alt=""></a>
         <p class="title">註冊會員帳號</p>
-        <input type="text" placeholder="輸入姓名">
-        <input type="text" placeholder="輸入電子信箱">
-        <input type="text" placeholder="輸入密碼">
-        <button>註冊新帳號</button>
-        <a href="#" class="btn_txt" onclick="openPopup('popup_login')">已經有帳戶了？點此登入</a>
+        <div>
+            <input type="text" placeholder="輸入姓名" id="regist_username">
+            <span class="error" id="error_regist_username"></span>
+        </div>
+        <div>
+            <input type="text" placeholder="輸入電子信箱" id="regist_useremail">
+            <span class="error" id="error_regist_useremail"></span>
+        </div>
+        <div>
+            <input type="text" placeholder="輸入密碼" id="regist_userpw">
+            <span class="error" id="error_regist_userpw"></span>
+        </div>
+        <button onclick="regist()">註冊新帳號</button>
+        <p id="popup_registMessage"></p>
+        <a href="javascript:void(0);" class="btn_txt" onclick="openPopup('popup_login')">已經有帳戶了？點此登入</a>
     </div>
     <div class="pagecover" onclick="closePopup(this)"></div>
 
+    <script type="text/javascript" src="http://3.18.227.207:3000/static/config.js"></script>
+    <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/config.js"></script> -->
+    
+    <script type="text/javascript" src="http://3.18.227.207:3000/static/user.js"></script>
+    <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/user.js"></script> -->
     <script>
         let location_href = location.href.split("/");
         let attraction_id = location_href[location_href.length-1];
@@ -92,30 +114,6 @@
 
         // console.log(attraction_id);
         apiAttraction(attraction_id);
-
-        function openPopup(id) {
-            // console.log(id);
-            if (document.body.classList.contains("open_popup")) {
-                for (let i = 0; i < document.getElementsByClassName("popup").length; i++) {
-                    document.getElementsByClassName("popup")[i].classList.remove("show");
-                }
-            } else {
-                document.body.classList.add("open_popup");
-            }
-            document.getElementById(id).classList.add("show");
-
-        }
-
-        function closePopup(e) {
-            if (e.classList.contains("pagecover")) {
-                for (let i = 0; i < document.getElementsByClassName("popup").length; i++) {
-                    document.getElementsByClassName("popup")[i].classList.remove("show");
-                }
-            } else {
-                e.parentElement.classList.remove("show");
-            }
-            document.body.classList.remove("open_popup");
-        }
 
         function changeCost(cost) {
             // console.log(cost);
@@ -125,8 +123,9 @@
         }
 
         function apiAttraction(id) {
-            src = "http://3.18.227.207:3000/api/attraction/"+ id;
+            // src = "http://3.18.227.207:3000/api/attraction/"+ id;
             // src = "http://127.0.0.1:3000/api/attraction/"+ id;
+            src = config.url + "api/attraction/" + id;
         
             fetch(src).then(function (response) {
                 return response.json();//取回的字串已轉成json
