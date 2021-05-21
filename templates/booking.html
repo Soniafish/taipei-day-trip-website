@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://3.18.227.207:3000/static/main.css">
+    <!-- <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css"> -->
+    <title>Taipei-TRIP</title>
+</head>
+
+<body>
+    <header>
+        <div class="header_top container">
+            <h1>台北一日遊</h1>
+            <div>
+                <a href="javascript:void(0);" class="btn_txt" onclick="getBooking()">預定行程</a>
+                <a href="javascript:void(0);" class="btn_txt" id="signinToPopup" onclick="openPopup('popup_login')">登入/註冊</a>
+                <a href="javascript:void(0);" class="btn_txt" id="signout" onclick="signout()">登出系統</a>
+            </div>
+        </div>
+    </header>
+    <div class="maincontent container" id="attration">
+
+        <div class="booking_wrap">
+            <h1>您好，<span id="userName"></span>，待預訂的行程如下：</h1>
+            <span class="no-booking">目前沒有任何預定的行程</span>
+        </div>
+        <div class="booking_wrap has-booking">
+            <div class="booking_info_trip">
+                <div class="booking_infoTrip_left">
+                    <img id="booking_attrationImg" src="" alt="" width="100%">
+                    <div>
+                        <h3>台北一日遊：<span id="booking_attrationName"></span></h3>
+                        <p class="booking_infoTrip_item">日期：<span id="booking_date"></span></p>
+                        <p class="booking_infoTrip_item">時間：<span id="booking_time"></span></p>
+                        <p class="booking_infoTrip_item">費用：<span id="booking_price"></span></p>
+                        <p class="booking_infoTrip_item">地點：<span id="booking_attrationAddr"></span></p>
+                    </div>
+                </div>
+                <a href="javasccript:void(0);" class="booking_del" onclick="delBooking()"><img src="http://127.0.0.1:3000/static/images/delet.svg" alt=""></a>
+            </div>
+        </div>
+
+        <div class="booking_wrap has-booking">
+            <h2>您的聯絡資訊</h2>
+            <label>聯絡姓名：<input type="text" id="order_name"></label>
+            <label>聯絡信箱：<input type="email" id="order_email"></label>
+            <label>手機號碼：<input type="tel" id="order_tel"></label>
+            <p class="booking_note">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</p>
+        </div>
+
+        <div class="booking_wrap has-booking">
+            <h2>信用卡付款資訊</h2>
+            <!-- <label>卡片號碼：<input type="number"></label> -->
+            <label>卡片號碼：<input type="text" placeholder="**** **** **** ****"></label>
+            <!-- <label>過期時間：<input type="month" placeholder="MM/YY"></label> -->
+            <label>過期時間：<input type="text" placeholder="MM/YY"></label>
+            <label>驗證密碼：<input type="text" placeholder="CVV"></label>
+        </div>
+        <div class="booking_btnwrap has-booking">
+            <p class="booking_cost">總價：<span id="order_price"></span></p>
+            <button class="booking_btn">確認訂購並付款</button>
+        </div>
+
+    </div>
+    <footer>COPYRIGHT © 2021 台北一日遊</footer>
+
+    <div class="popup" id="popup_login">
+        <span></span>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img
+                src="http://3.18.227.207:3000/static/images/esc.svg" alt=""></a>
+        <p class="title">登入會員帳號</p>
+        <div>
+            <input type="email" name="useremail" placeholder="輸入電子信箱" id="login_useremail">
+            <span class="error" id="error_login_useremail"></span>
+        </div>
+        <div>
+            <input type="password" name="userpw" placeholder="輸入密碼" id="login_userpw">
+            <span class="error" id="error_login_userpw"></span>
+        </div>
+        <button onclick="signin()">登入帳號</button>
+        <p id="popup_loginMessage"></p>
+        <a href="javascript:void(0);" class="btn_txt" onclick="openPopup('popup_regist')">還沒有帳戶？點此註冊</a>
+    </div>
+    <div class="popup" id="popup_regist">
+        <span></span>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img
+                src="http://3.18.227.207:3000/static/images/esc.svg" alt=""></a>
+        <p class="title">註冊會員帳號</p>
+        <div>
+            <input type="text" placeholder="輸入姓名" id="regist_username">
+            <span class="error" id="error_regist_username"></span>
+        </div>
+        <div>
+            <input type="text" placeholder="輸入電子信箱" id="regist_useremail">
+            <span class="error" id="error_regist_useremail"></span>
+        </div>
+        <div>
+            <input type="text" placeholder="輸入密碼" id="regist_userpw">
+            <span class="error" id="error_regist_userpw"></span>
+        </div>
+        <button onclick="regist()">註冊新帳號</button>
+        <p id="popup_registMessage"></p>
+        <a href="javascript:void(0);" class="btn_txt" onclick="openPopup('popup_login')">已經有帳戶了？點此登入</a>
+    </div>
+    <div class="pagecover" onclick="closePopup(this)"></div>
+
+    <script type="text/javascript" src="http://3.18.227.207:3000/static/config.js"></script>
+    <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/config.js"></script> -->
+
+    <script type="text/javascript" src="http://3.18.227.207:3000/static/user.js"></script>
+    <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/user.js"></script> -->
+
+    <script type="text/javascript" src="http://3.18.227.207:3000/static/booking.js"></script>
+    <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/booking.js"></script> -->
+    <script>
+        getBookingInfo();
+
+        function getBookingInfo() {
+            // src = "http://3.18.227.207:3000/api/booking";
+            // src = "http://127.0.0.1:3000/api/booking";
+            src = config.url + "api/booking";
+
+            fetch(src, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(function (response) {
+                return response.json();//取回的字串已轉成json
+            }).then(function (result) {
+                console.log(result);
+
+                if(result.hasOwnProperty('data')){
+                    
+                    if(result.data==null){// 沒有預定行程
+                        let noBooking = document.querySelector(".no-booking");
+                        noBooking.style.display="block";
+
+                    }else{// 有預定行程
+                        let hasBooking = document.querySelectorAll(".has-booking");
+                        for (let i = 0; i < hasBooking.length; i++) {
+                            hasBooking[i].style.display = "block";
+                        }
+
+                        let attractionName = result.data.attraction.name;
+                        let attractionAddress = result.data.attraction.address;
+                        let attractionImg = result.data.attraction.image;
+                        let bookingData = result.data.date;
+                        let bookingTime = result.data.time;
+                        let bookingPrice = result.data.price;
+
+                        let booking_attrationImg = document.querySelector("#booking_attrationImg");
+                        booking_attrationImg.src = attractionImg;
+                        booking_attrationImg.alt = attractionName;
+
+                        let booking_attrationName = document.querySelector("#booking_attrationName");
+                        booking_attrationName.appendChild(document.createTextNode(attractionName));
+
+                        let booking_attrationAddr = document.querySelector("#booking_attrationAddr");
+                        booking_attrationAddr.appendChild(document.createTextNode(attractionAddress));
+
+                        let booking_date = document.querySelector("#booking_date");
+                        booking_date.appendChild(document.createTextNode(bookingData));
+
+                        let booking_time = document.querySelector("#booking_time");
+                        if(bookingTime=="morning"){
+                            bookingTime = "早上 9 點到下午 4 點";
+                        }else{
+                            bookingTime = "下午 2 點到晚上 9 點";
+                        }
+                        booking_time.appendChild(document.createTextNode(bookingTime));
+
+                        let booking_price = document.querySelector("#booking_price");
+                        booking_price.appendChild(document.createTextNode("新台幣 "+bookingPrice+" 元"));
+                        let order_price = document.querySelector("#order_price");
+                        order_price.appendChild(document.createTextNode("新台幣 " + bookingPrice + " 元"));
+
+                        console.log(user);
+                        let userName = document.querySelector("#userName");
+                        userName.appendChild(document.createTextNode(user.name));
+                        document.querySelector("#order_name").value = user.name;
+                        document.querySelector("#order_email").value = user.email;
+                    }
+                }
+
+            });
+
+        }
+
+        function delBooking(){
+            // src = "http://3.18.227.207:3000/api/booking";
+            // src = "http://127.0.0.1:3000/api/booking";
+            src = config.url + "api/booking";
+            fetch(src, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(function (response) {
+                return response.json();//取回的字串已轉成json
+            }).then(function (result) {
+                location.reload();
+            });
+
+        }
+
+    </script>
+</body>
+
+</html>

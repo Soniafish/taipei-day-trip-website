@@ -15,7 +15,7 @@
         <div class="header_top container">
             <h1>台北一日遊</h1>
             <div>
-                <a href="javascript:void(0);" class="btn_txt">預定行程</a>
+                <a href="javascript:void(0);" class="btn_txt" onclick="getBooking()">預定行程</a>
                 <a href="javascript:void(0);" class="btn_txt" id="signinToPopup" onclick="openPopup('popup_login')">登入/註冊</a>
                 <a href="javascript:void(0);" class="btn_txt" id="signout" onclick="signout()">登出系統</a>
             </div>
@@ -37,14 +37,14 @@
                     <p class="title">預購導覽行程</p>
                     <p>此景點為中心的一日行程，帶您探索城市角落故事</p>
                     <div>
-                        <span class="title">選擇日期：</span> <input type="date"></div>
+                        <span class="title">選擇日期：</span> <input type="date" id="attration_trip_date"></div>
                     <div>
                         <span class="title">選擇時間：</span>
-                        <label class="attration_trip_check"><input type="radio" name="time" value="2000" checked onchange="changeCost(2000)"><span></span>上半天</label>
-                        <label class="attration_trip_check"><input type="radio" name="time" value="2500" onchange="changeCost(2500)"><span></span>下半天</label>
+                        <label class="attration_trip_check"><input type="radio" name="time" value="morning" checked onchange="changeCost(2000)"><span></span>上半天</label>
+                        <label class="attration_trip_check"><input type="radio" name="time" value="afternoon" onchange="changeCost(2500)"><span></span>下半天</label>
                     </div>
                     <div><span class="title">導覽費用：</span>新台幣<span id="attration_trip_cost">2000</span>元</div>
-                    <button>開始預定行程</button>
+                    <button onclick="setBooking()">開始預定行程</button>
                 </div>
             </div>
         </div>
@@ -107,11 +107,21 @@
     
     <script type="text/javascript" src="http://3.18.227.207:3000/static/user.js"></script>
     <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/user.js"></script> -->
+
+    <script type="text/javascript" src="http://3.18.227.207:3000/static/booking.js"></script>
+    <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/booking.js"></script> -->
     <script>
         let location_href = location.href.split("/");
         let attraction_id = location_href[location_href.length-1];
         let attraction_imgs;
 
+        //設定最小日期, 與預設日期
+        let dateTime = new Date();
+        dateTime = dateTime.setDate(dateTime.getDate() + 1);
+        dateTime = new Date(dateTime).toJSON().split("T")[0];
+        document.querySelector('#attration_trip_date').min = dateTime;
+        document.querySelector('#attration_trip_date').value = dateTime;
+        
         // console.log(attraction_id);
         apiAttraction(attraction_id);
 

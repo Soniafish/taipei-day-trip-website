@@ -198,6 +198,143 @@ def handel_signout():
                 )
 
 
+@app.route("/api/booking", methods=["GET"]) #取得未下單的預定行程
+def handel_getBooking():
+    if "userId" in session:
+        userId = session["userId"]
+        result = cursor.execute(f"select * from booking where userId='{userId}'")
+        print(result)
+        if result:
+            select_data=cursor.fetchone()
+            booking_attraction=select_data[2]
+            booking_date=select_data[3]
+            booking_time=select_data[4]
+            booking_price=select_data[5]
+
+            result_attration = cursor.execute(f"select * from taipeiAttrations where id='{booking_attraction}'")
+            select_data2=cursor.fetchone()
+            attraction_name=select_data2[1]
+            attraction_address=select_data2[4]
+            attraction_imgs=select_data2[7].split(",")
+            # response data待處理
+            return Response(
+                response=json.dumps({
+                    "data": {
+                        "attraction": {
+                        "id": booking_attraction,
+                        "name": attraction_name,
+                        "address": attraction_address,
+                        "image": attraction_imgs[0]
+                        },
+                        "date": booking_date,
+                        "time": booking_time,
+                        "price": booking_price
+                    }
+                }),
+                status=200,
+                content_type='application/json'
+            )
+
+        return Response(
+            response=json.dumps({
+                "data": None
+            }),
+            status=200,
+            content_type='application/json'
+        )
+
+    return Response(
+        response=json.dumps({
+            "error": True,
+            "message": "未登入系統，拒絕存取"
+        }),
+        status=403,
+        content_type='application/json'
+    )        
+
+
+@app.route("/api/booking", methods=["POST"]) #建立新的預定行程
+def handel_setBooking():
+    if "userId" in session:
+        try:
+            userId = session["userId"]
+            insertValues=request.get_json()
+            attractionId=insertValues["attractionId"]
+            date=insertValues["date"]
+            time=insertValues["time"]
+            price=insertValues["price"]
+
+            if attractionId==None or date==None or time==None or price==None:
+                return Response(
+                    response=json.dumps({
+                        "error": True,
+                        "message": "建立失敗，輸入不正確或其他原因"
+                    }),
+                    status=400,
+                    content_type='application/json'
+                )
+
+            # 篩選資料表的資料
+            result=cursor.execute(f"SELECT * FROM booking where userId='{userId}'")
+            if result: # 使用者曾預定過行程:即資料表已有該使用者帳號
+                print(f"UPDATE booking SET attractionId='{attractionId}', date='{date}', time='{time}', price='{price}' WHERE userId='{userId}'")
+                cursor.execute(f"UPDATE booking SET attractionId='{attractionId}', date='{date}', time='{time}', price='{price}' WHERE userId='{userId}'")
+            else: # 使用者未曾預定過行程:即資料表無該使用者帳號
+                print(f"INSERT INTO booking(userId, attractionId, date, time, price)VALUES('{userId}','{attractionId}', '{date}', '{time}', '{price}')")
+                cursor.execute(f"INSERT INTO booking(userId, attractionId, date, time, price)VALUES('{userId}','{attractionId}', '{date}', '{time}', '{price}')")
+            cnnt.commit()
+            return Response(
+                response=json.dumps({
+                    "ok": True
+                }),
+                status=200,
+                content_type='application/json'
+            )
+
+        except Exception as e:
+            print(e) 
+            return Response(
+                response=json.dumps({
+                    "error": True,
+                    "message": "伺服器內部錯誤"
+                }),
+                status=500,
+                content_type='application/json'
+            )
+
+    return Response(
+        response=json.dumps({
+            "error": True,
+            "message": "未登入系統，拒絕存取"
+        }),
+        status=403,
+        content_type='application/json'
+    )
+    
+
+@app.route("/api/booking", methods=["DELETE"]) #刪除目前的預定行程
+def handel_delBooking():
+    if "userId" in session:
+        userId = session["userId"]
+        cursor.execute(f"DELETE FROM booking WHERE userId='{userId}'")
+        cnnt.commit()
+        return Response(
+                response=json.dumps({
+                    "ok": True
+                }),
+                status=200,
+                content_type='application/json'
+            )
+   
+    return Response(
+            response=json.dumps({
+                "error": True,
+                "message": "未登入系統，拒絕存取"
+            }),
+            status=403,
+            content_type='application/json'
+        )
+
 
 if (os.environ['localdebug']=='true'):
     app.run(port=3000)
