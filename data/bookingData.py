@@ -33,5 +33,5 @@ cnnt=db_connect()
 cursor=cnnt.cursor()
 cursor.execute("use tripWebsite")
 # id, userId, attractionId, date, time, price
-cursor.execute("create table booking(id bigint PRIMARY KEY auto_increment, userId bigint not null, attractionId varchar(255) not null, date  not null, time tinytext not null, price mediumint not null)")
+cursor.execute("create table booking(id bigint PRIMARY KEY auto_increment, userId bigint not null, attractionId varchar(255) not null, date  varchar(255) not null, time tinytext not null, price mediumint not null)")
 cnnt.commit()
