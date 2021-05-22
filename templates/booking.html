@@ -134,10 +134,7 @@
                 console.log(result);
 
                 if(result.hasOwnProperty('data')){
-                    console.log(user);
-                    let userName = document.querySelector("#userName");
-                    userName.appendChild(document.createTextNode(user.name));
-
+                    
                     if(result.data==null){// 沒有預定行程
                         let noBooking = document.querySelector(".no-booking");
                         noBooking.style.display="block";
@@ -181,6 +178,7 @@
                         let order_price = document.querySelector("#order_price");
                         order_price.appendChild(document.createTextNode("新台幣 " + bookingPrice + " 元"));
 
+                        console.log(user);
                         document.querySelector("#order_name").value = user.name;
                         document.querySelector("#order_email").value = user.email;
                     }

@@ -27,10 +27,10 @@ function handel_userinfo() {
             btn_signout.classList.add("show");
 
             //如果是booking頁, 帶入username
-            // if (location.href.split("/")[location.href.split("/").length - 1] == "booking") {
-            //     let userName=document.querySelector("#userName");
-            //     userName.appendChild(document.createTextNode(result.data.name));
-            // }
+            if (location.href.split("/")[location.href.split("/").length - 1] == "booking") {
+                let userName=document.querySelector("#userName");
+                userName.appendChild(document.createTextNode(result.data.name));
+            }
 
         }
 
