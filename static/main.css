@@ -473,6 +473,10 @@ footer{
     border: 1px solid #448899;
     border-radius: 5px;
 }
+.attration_trip_info button:hover{
+    cursor: pointer;
+    background-color: #579daf;
+}
 .attration_info{
     border-top: 1px solid #e8e8e8;
     color: #666;
@@ -500,5 +504,133 @@ footer{
     }
     .attration_trip{
         width: 100%;
+    }
+}
+
+/* booking.html */
+.has-booking, .no-booking{
+    display: none;
+}
+.no-booking{
+    margin-top: 35px;
+}
+.booking_wrap{
+    padding: 40px 100px 0 100px;
+}
+.booking_wrap + .booking_wrap{
+    padding: 40px 100px;
+    border-bottom: 1px solid #E8E8E8;
+}
+.booking_wrap h1{
+    font-weight: 700;
+    font-size: 19px;
+}
+.booking_wrap h2{
+    font-weight: 700;
+    font-size: 19px;
+    margin-bottom: 24px;
+}
+.booking_info_trip{
+    display: flex;
+    justify-content: space-between;
+}
+.booking_infoTrip_left{
+    display: flex;
+}
+.booking_infoTrip_left img{
+    width: 266px;
+    margin-right: 22px;
+}
+.booking_infoTrip_left h3{
+    color: #448899;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+.booking_infoTrip_left h3 span{
+    color: #448899;
+}
+.booking_infoTrip_item{
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+.booking_infoTrip_item span{
+    font-weight: normal;
+}
+.booking_wrap label{
+    display: block;
+    margin-bottom: 15px;
+}
+.booking_wrap input{
+    border: 1px solid #E8E8E8;
+    width: 200px;
+    height: 38px;
+    padding: 10px;
+    border-radius: 5px;
+}
+.booking_note{
+    font-weight: 700;
+    line-height: 24px;
+}
+.booking_btnwrap{
+    padding: 40px 100px;
+    text-align: right;
+}
+.booking_cost{
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+.booking_btn{
+    font-size: 19px;
+    width: 170px;
+    line-height: 32px;
+    height: 36px;
+    text-align: center;
+    color: #fff;
+    background-color: #448899;
+    border: 1px solid #448899;
+    border-radius: 5px;
+}
+.booking_btn:hover{
+    cursor: pointer;
+    background-color: #579daf;
+}
+.booking_del:hover{
+    opacity: .8;
+}
+@media screen and (max-width: 1007px) {
+    .booking_wrap{
+        padding: 40px 80px 0;
+    }
+    .booking_wrap + .booking_wrap, .booking_btnwrap{
+        padding: 45px 80px;
+    }
+}
+@media screen and (max-width: 768px) {
+    .booking_wrap{
+        padding: 45px 0 0;
+    }
+    .booking_wrap + .booking_wrap, .booking_btnwrap{
+        padding: 45px 0 40px;
+    }
+    .booking_info_trip{
+        position: relative;
+        display: block;
+    }
+    .booking_infoTrip_left img{
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 35px;
+    }
+    .booking_infoTrip_left{
+        display: block;
+    }
+    .booking_info_trip{
+        position: relative;
+        padding-bottom: 30px;
+    }
+    .booking_del{
+        position: absolute;
+        bottom: 0;
+        right: 0;
     }
 }

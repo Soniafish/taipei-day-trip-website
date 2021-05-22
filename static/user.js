@@ -15,16 +15,28 @@ function handel_userinfo() {
         if (result == null) {
             let btn_signinToPopup = document.querySelector("#signinToPopup");
             btn_signinToPopup.classList.add("show");
+
+            //如果是booking頁, 直接導到首頁
+            if (location.href.split("/")[location.href.split("/").length - 1]=="booking"){
+                document.location.href = config.url;
+            }
+
         } else {
-            // user = result.data;
+            user = result.data;
             let btn_signout = document.querySelector("#signout");
             btn_signout.classList.add("show");
+
+            //如果是booking頁, 帶入username
+            if (location.href.split("/")[location.href.split("/").length - 1] == "booking") {
+                let userName=document.querySelector("#userName");
+                userName.appendChild(document.createTextNode(result.data.name));
+                document.querySelector("#order_name").value = user.name;
+                document.querySelector("#order_email").value = user.email;
+            }
+
         }
 
     });
-
-    
-    
 
 }
 
@@ -37,21 +49,9 @@ function regist() {
     let userPW = document.querySelector("#regist_userpw").value;
 
     let error_regist_username = document.querySelector("#error_regist_username");
-    // if (error_regist_username.textContent !== "") {
-    //     error_regist_username.removeChild(error_regist_username.firstChild);
-    // }
     let error_regist_useremail = document.querySelector("#error_regist_useremail");
-    // if (error_regist_useremail.textContent !== "") {
-    //     error_regist_useremail.removeChild(error_regist_useremail.firstChild);
-    // }
     let error_regist_userpw = document.querySelector("#error_regist_userpw");
-    // if (error_regist_userpw.textContent !== "") {
-    //     error_regist_userpw.removeChild(error_regist_userpw.firstChild);
-    // }
     let popup_registMessage = document.querySelector("#popup_registMessage");
-    // if (popup_registMessage.textContent !== "") {
-    //     popup_registMessage.removeChild(popup_registMessage.firstChild);
-    // }
     clearErrorMessage();
 
     if (userName == "" || userEmail == "" || userPW == "") {
@@ -136,7 +136,7 @@ function signin() {
         }).then(function (result) {
             // console.log(result);
             if (result.hasOwnProperty('ok')){
-                document.location.href = config.url;
+                location.reload();
             }else{
                 popup_loginMessage.appendChild(document.createTextNode(result.message));
             }
@@ -148,7 +148,6 @@ function signin() {
 //登出
 function signout() {
     // console.log("start signin");
-
     user={};
     fetch(userApi_src, {
         method: 'DELETE',

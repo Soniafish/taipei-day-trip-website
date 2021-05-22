@@ -32,7 +32,6 @@ cnnt=db_connect()
 # 建立Cursor物件
 cursor=cnnt.cursor()
 cursor.execute("use tripWebsite")
-#id, name, email, password, time
-cursor.execute("create table user(id bigint primary key auto_increment, name varchar(255) not null, email varchar(255) not null, password varchar(255) not null, time datetime not null default current_timestamp)")
-cursor.execute("INSERT INTO user (name, email, password) VALUES ('admin','admin@gmail.com', 'admin1234')")
+# id, userId, attractionId, date, time, price
+cursor.execute("create table booking(id bigint PRIMARY KEY auto_increment, userId bigint not null, attractionId varchar(255) not null, date  varchar(255) not null, time tinytext not null, price mediumint not null)")
 cnnt.commit()
