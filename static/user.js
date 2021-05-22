@@ -30,6 +30,8 @@ function handel_userinfo() {
             if (location.href.split("/")[location.href.split("/").length - 1] == "booking") {
                 let userName=document.querySelector("#userName");
                 userName.appendChild(document.createTextNode(result.data.name));
+                document.querySelector("#order_name").value = user.name;
+                document.querySelector("#order_email").value = user.email;
             }
 
         }
