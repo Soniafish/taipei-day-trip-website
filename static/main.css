@@ -556,11 +556,19 @@ footer{
 .booking_infoTrip_item span{
     font-weight: normal;
 }
-.booking_wrap label{
-    display: block;
+.booking_wrap label, .booking_wrap .tpfield_wrap{
+    display: flex;
     margin-bottom: 15px;
+    align-items: center;
 }
-.booking_wrap input{
+/* .tpfield {
+    height: 40px;
+    width: 300px;
+    border: 1px solid gray;
+    margin: 5px 0;
+    padding: 5px;
+} */
+.booking_wrap input, .booking_wrap .tpfield{
     border: 1px solid #E8E8E8;
     width: 200px;
     height: 38px;

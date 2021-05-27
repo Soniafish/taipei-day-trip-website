@@ -53,15 +53,13 @@
 
         <div class="booking_wrap has-booking">
             <h2>信用卡付款資訊</h2>
-            <!-- <label>卡片號碼：<input type="number"></label> -->
-            <label>卡片號碼：<input type="text" placeholder="**** **** **** ****"></label>
-            <!-- <label>過期時間：<input type="month" placeholder="MM/YY"></label> -->
-            <label>過期時間：<input type="text" placeholder="MM/YY"></label>
-            <label>驗證密碼：<input type="text" placeholder="CVV"></label>
+            <div class="tpfield_wrap">卡片號碼：<div class="tpfield" id="card-number"></div></div>
+            <div class="tpfield_wrap">過期時間：<div class="tpfield" id="card-expiration-date"></div></div>
+            <div class="tpfield_wrap">驗證密碼：<div class="tpfield" id="card-ccv"></div></div>
         </div>
         <div class="booking_btnwrap has-booking">
             <p class="booking_cost">總價：<span id="order_price"></span></p>
-            <button class="booking_btn">確認訂購並付款</button>
+            <button class="booking_btn" onclick="checkBooking()">確認訂購並付款</button>
         </div>
 
     </div>
@@ -106,6 +104,146 @@
         <a href="javascript:void(0);" class="btn_txt" onclick="openPopup('popup_login')">已經有帳戶了？點此登入</a>
     </div>
     <div class="pagecover" onclick="closePopup(this)"></div>
+
+    <script src="https://js.tappaysdk.com/tpdirect/v5.7.0"></script>
+    <script>
+        TPDirect.setupSDK(20432, 'app_8oSoNVlkpd8AxOfagj2KBabGfaWhFpBgseJS6Gdj9LpwdKCdf1aoxyFkeYV2', 'sandbox')
+    </script>
+    <script>
+        // Display ccv field
+        let fields = {
+            number: {
+                // css selector
+                element: '#card-number',
+                placeholder: '**** **** **** ****'
+            },
+            expirationDate: {
+                // DOM object
+                element: document.getElementById('card-expiration-date'),
+                placeholder: 'MM / YY'
+            },
+            ccv: {
+                element: '#card-ccv',
+                placeholder: 'ccv'
+            }
+        };
+
+        TPDirect.card.setup({
+            fields: fields,
+            styles: {
+                // Style all elements
+                'input': {
+                    'color': '#757575'
+                },
+                // Styling ccv field
+                'input.ccv': {
+                    'font-size': '16px'
+                },
+                // Styling expiration-date field
+                'input.expiration-date': {
+                    'font-size': '16px'
+                },
+                // Styling card-number field
+                'input.card-number': {
+                    'font-size': '16px'
+                },
+                // style focus state
+                ':focus': {
+                    // 'color': 'black'
+                },
+                // style valid state
+                '.valid': {
+                    'color': 'green'
+                },
+                // style invalid state
+                '.invalid': {
+                    'color': 'red'
+                },
+                // Media queries
+                // Note that these apply to the iframe, not the root window.
+                // '@media screen and (max-width: 400px)': {
+                //     'input': {
+                //         'color': 'orange'
+                //     }
+                // }
+            }
+        });
+
+
+        function checkBooking() {
+            // 取得 TapPay Fields 的 status
+            const tappayStatus = TPDirect.card.getTappayFieldsStatus()
+
+            // 確認是否可以 getPrime
+            if (tappayStatus.canGetPrime === false) {
+                alert('can not get prime')
+                return
+            }
+
+            // Get prime
+            TPDirect.card.getPrime((result) => {
+                if (result.status !== 0) {
+                    alert('get prime error ' + result.msg)
+                    return
+                }
+                alert('get prime 成功，prime: ' + result.card.prime)
+
+                // send prime to your server, to pay with Pay by Prime API .
+                // Pay By Prime Docs: https://docs.tappaysdk.com/tutorial/zh/back.html#pay-by-prime-api
+            })
+            
+            // TPDirect.card.onUpdate(function (update) {
+            //     // update.canGetPrime === true
+            //     // --> you can call TPDirect.card.getPrime()
+            //     if (update.canGetPrime) {
+            //         // Enable submit Button to get prime.
+            //         // submitButton.removeAttribute('disabled')
+
+            //         // cardTypes = ['mastercard', 'visa', 'jcb', 'amex', 'unionpay','unknown']
+            //         console.log(update.cardType);
+
+            //         let cardPrime = TPDirect.card.getPrime();
+
+            //     } else {
+            //         // Disable submit Button to get prime.
+            //         // submitButton.setAttribute('disabled', true)
+
+            //         // number 欄位是錯誤的
+            //         if (update.status.number === 2) {//欄位有錯誤，此時在 CardView 裡面會用顯示 errorColor
+            //             // setNumberFormGroupToError()
+            //             console.log("card number 欄位有錯誤");
+            //         } else if (update.status.number === 0) {//欄位已填好，並且沒有問題
+            //             // setNumberFormGroupToSuccess()
+            //         } else {
+            //             // setNumberFormGroupToNormal()
+            //         }
+
+            //         if (update.status.expiry === 2) {
+            //             // setNumberFormGroupToError()
+            //             console.log("card expiry 欄位有錯誤");
+            //         } else if (update.status.expiry === 0) {
+            //             // setNumberFormGroupToSuccess()
+            //         } else {
+            //             // setNumberFormGroupToNormal()
+            //         }
+
+            //         if (update.status.ccv === 2) {
+            //             // setNumberFormGroupToError()
+            //             console.log("card ccv 欄位有錯誤");
+            //         } else if (update.status.ccv === 0) {
+            //             // setNumberFormGroupToSuccess()
+            //         } else {
+            //             // setNumberFormGroupToNormal()
+            //         }
+
+            //     }
+
+            // });
+
+
+        }
+        
+    </script>
 
     <script type="text/javascript" src="http://3.18.227.207:3000/static/config.js"></script>
     <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/config.js"></script> -->
