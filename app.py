@@ -362,34 +362,52 @@ def handel_orders():
             # print("date and time:"+orderNumber)
             userId=session["userId"]
 
-            cursor.execute(f"INSERT INTO orders(number, userId, price, attractionId, attractionName, attractionAddr, attractionImg, tripDate, tripTime, contactName, contactEmail, contactPhone, status)VALUES('{orderNumber}','{userId}', '{price}', '{attractionId}', '{attractionName}', '{attractionAddr}', '{attractionImg}', '{tripDate}', '{tripTime}', '{contactName}', '{contactEmail}', '{contactPhone}', '{0}')")
+            resultOrder=cursor.execute(f"INSERT INTO orders(number, userId, price, attractionId, attractionName, attractionAddr, attractionImg, tripDate, tripTime, contactName, contactEmail, contactPhone, status)VALUES('{orderNumber}','{userId}', '{price}', '{attractionId}', '{attractionName}', '{attractionAddr}', '{attractionImg}', '{tripDate}', '{tripTime}', '{contactName}', '{contactEmail}', '{contactPhone}', '{0}')")
+            print("resultOrder:")
+            print(resultOrder)
             cnnt.commit()
-            
-            url = "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
-            headers = {
-                "Content-Type":"application/json",
-                "x-api-key": os.environ["partner_key"],
-            }
-            payload = json.dumps({
-                "prime": prime,
-                "partner_key": os.environ["partner_key"],
-                "merchant_id": os.environ["merchant_id"],
-                "details": "TapPay Test",
-                "amount": price,
-                "cardholder": {
-                    "phone_number": contactPhone,
-                    "name": contactName,
-                    "email": contactEmail
-                },
-                "remember": True
-            })
-            # print("payload:"+payload)
-            response = requests.request("POST", url, headers=headers, data=payload)
-            print(response.text)
+            if resultOrder ==1: #訂單成立           
+                url = "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
+                headers = {
+                    "Content-Type":"application/json",
+                    "x-api-key": os.environ["partner_key"],
+                }
+                payload = json.dumps({
+                    "prime": prime,
+                    "partner_key": os.environ["partner_key"],
+                    "merchant_id": os.environ["merchant_id"],
+                    "details": "TapPay Test",
+                    "amount": price,
+                    "cardholder": {
+                        "phone_number": contactPhone,
+                        "name": contactName,
+                        "email": contactEmail
+                    },
+                    "remember": True
+                })
+                # print("payload:"+payload)
+                response = requests.request("POST", url, headers=headers, data=payload)
+                print(response.text)
 
-            if json.loads(response.text)["status"] == 0:
-                cursor.execute(f"UPDATE orders SET status='{1}' WHERE number='{orderNumber}'")
-                cnnt.commit()
+                handel_delBooking()
+
+                if json.loads(response.text)["status"] == 0:
+                    cursor.execute(f"UPDATE orders SET status='{1}' WHERE number='{orderNumber}'")
+                    cnnt.commit()
+
+                    return Response(
+                        response=json.dumps({
+                            "data": {
+                                "number": "20210425121135",
+                                "payment": {
+                                    "status": 0,
+                                    "message": "付款成功"
+                                }
+                            }
+                        }),
+                        status=200,
+                        content_type='application/json'
+                    )
 
                 return Response(
                     response=json.dumps({
@@ -397,7 +415,7 @@ def handel_orders():
                             "number": "20210425121135",
                             "payment": {
                                 "status": 0,
-                                "message": "付款成功"
+                                "message": "付款失敗"
                             }
                         }
                     }),
@@ -407,25 +425,12 @@ def handel_orders():
 
             return Response(
                 response=json.dumps({
-                    "data": {
-                        "number": "20210425121135",
-                        "payment": {
-                            "status": 0,
-                            "message": "付款失敗"
-                        }
-                    }
+                    "error": True,
+                    "message": "訂單建立失敗"
                 }),
-                status=200,
+                status=400,
                 content_type='application/json'
-            )
-            # return Response(
-            #     response=json.dumps({
-            #         "error": True,
-            #         "message": "訂單建立失敗"
-            #     }),
-            #     status=400,
-            #     content_type='application/json'
-            # ) 
+            ) 
 
         except Exception as e:
             print(e) 
