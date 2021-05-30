@@ -105,146 +105,6 @@
     </div>
     <div class="pagecover" onclick="closePopup(this)"></div>
 
-    <script src="https://js.tappaysdk.com/tpdirect/v5.7.0"></script>
-    <script>
-        TPDirect.setupSDK(20432, 'app_8oSoNVlkpd8AxOfagj2KBabGfaWhFpBgseJS6Gdj9LpwdKCdf1aoxyFkeYV2', 'sandbox')
-    </script>
-    <script>
-        // Display ccv field
-        let fields = {
-            number: {
-                // css selector
-                element: '#card-number',
-                placeholder: '**** **** **** ****'
-            },
-            expirationDate: {
-                // DOM object
-                element: document.getElementById('card-expiration-date'),
-                placeholder: 'MM / YY'
-            },
-            ccv: {
-                element: '#card-ccv',
-                placeholder: 'ccv'
-            }
-        };
-
-        TPDirect.card.setup({
-            fields: fields,
-            styles: {
-                // Style all elements
-                'input': {
-                    'color': '#757575'
-                },
-                // Styling ccv field
-                'input.ccv': {
-                    'font-size': '16px'
-                },
-                // Styling expiration-date field
-                'input.expiration-date': {
-                    'font-size': '16px'
-                },
-                // Styling card-number field
-                'input.card-number': {
-                    'font-size': '16px'
-                },
-                // style focus state
-                ':focus': {
-                    // 'color': 'black'
-                },
-                // style valid state
-                '.valid': {
-                    'color': 'green'
-                },
-                // style invalid state
-                '.invalid': {
-                    'color': 'red'
-                },
-                // Media queries
-                // Note that these apply to the iframe, not the root window.
-                // '@media screen and (max-width: 400px)': {
-                //     'input': {
-                //         'color': 'orange'
-                //     }
-                // }
-            }
-        });
-
-
-        function checkBooking() {
-            // 取得 TapPay Fields 的 status
-            const tappayStatus = TPDirect.card.getTappayFieldsStatus()
-
-            // 確認是否可以 getPrime
-            if (tappayStatus.canGetPrime === false) {
-                alert('can not get prime')
-                return
-            }
-
-            // Get prime
-            TPDirect.card.getPrime((result) => {
-                if (result.status !== 0) {
-                    alert('get prime error ' + result.msg)
-                    return
-                }
-                alert('get prime 成功，prime: ' + result.card.prime)
-
-                // send prime to your server, to pay with Pay by Prime API .
-                // Pay By Prime Docs: https://docs.tappaysdk.com/tutorial/zh/back.html#pay-by-prime-api
-            })
-            
-            // TPDirect.card.onUpdate(function (update) {
-            //     // update.canGetPrime === true
-            //     // --> you can call TPDirect.card.getPrime()
-            //     if (update.canGetPrime) {
-            //         // Enable submit Button to get prime.
-            //         // submitButton.removeAttribute('disabled')
-
-            //         // cardTypes = ['mastercard', 'visa', 'jcb', 'amex', 'unionpay','unknown']
-            //         console.log(update.cardType);
-
-            //         let cardPrime = TPDirect.card.getPrime();
-
-            //     } else {
-            //         // Disable submit Button to get prime.
-            //         // submitButton.setAttribute('disabled', true)
-
-            //         // number 欄位是錯誤的
-            //         if (update.status.number === 2) {//欄位有錯誤，此時在 CardView 裡面會用顯示 errorColor
-            //             // setNumberFormGroupToError()
-            //             console.log("card number 欄位有錯誤");
-            //         } else if (update.status.number === 0) {//欄位已填好，並且沒有問題
-            //             // setNumberFormGroupToSuccess()
-            //         } else {
-            //             // setNumberFormGroupToNormal()
-            //         }
-
-            //         if (update.status.expiry === 2) {
-            //             // setNumberFormGroupToError()
-            //             console.log("card expiry 欄位有錯誤");
-            //         } else if (update.status.expiry === 0) {
-            //             // setNumberFormGroupToSuccess()
-            //         } else {
-            //             // setNumberFormGroupToNormal()
-            //         }
-
-            //         if (update.status.ccv === 2) {
-            //             // setNumberFormGroupToError()
-            //             console.log("card ccv 欄位有錯誤");
-            //         } else if (update.status.ccv === 0) {
-            //             // setNumberFormGroupToSuccess()
-            //         } else {
-            //             // setNumberFormGroupToNormal()
-            //         }
-
-            //     }
-
-            // });
-
-
-        }
-        
-    </script>
-
     <script type="text/javascript" src="http://3.18.227.207:3000/static/config.js"></script>
     <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/config.js"></script> -->
 
@@ -254,6 +114,7 @@
     <script type="text/javascript" src="http://3.18.227.207:3000/static/booking.js"></script>
     <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/booking.js"></script> -->
     <script>
+        let bookingInfo={};
         getBookingInfo();
 
         function getBookingInfo() {
@@ -282,7 +143,7 @@
                         for (let i = 0; i < hasBooking.length; i++) {
                             hasBooking[i].style.display = "block";
                         }
-
+                        bookingInfo = result.data;
                         let attractionName = result.data.attraction.name;
                         let attractionAddress = result.data.attraction.address;
                         let attractionImg = result.data.attraction.image;
@@ -337,6 +198,145 @@
             }).then(function (result) {
                 location.reload();
             });
+
+        }
+
+    </script>
+
+    <script src="https://js.tappaysdk.com/tpdirect/v5.7.0"></script>
+    <script>
+        TPDirect.setupSDK(20432, 'app_8oSoNVlkpd8AxOfagj2KBabGfaWhFpBgseJS6Gdj9LpwdKCdf1aoxyFkeYV2', 'sandbox')
+    </script>
+    <script>
+        // Display ccv field
+        let fields = {
+            number: {
+                // css selector
+                element: '#card-number',
+                placeholder: '**** **** **** ****'
+            },
+            expirationDate: {
+                // DOM object
+                element: document.getElementById('card-expiration-date'),
+                placeholder: 'MM / YY'
+            },
+            ccv: {
+                element: '#card-ccv',
+                placeholder: 'ccv'
+            }
+        };
+
+        TPDirect.card.setup({
+            fields: fields,
+            styles: {
+                // Style all elements
+                'input': {
+                    'color': '#757575'
+                },
+                // Styling ccv field
+                'input.ccv': {
+                    'font-size': '16px'
+                },
+                // Styling expiration-date field
+                'input.expiration-date': {
+                    'font-size': '16px'
+                },
+                // Styling card-number field
+                'input.card-number': {
+                    'font-size': '16px'
+                },
+                // style focus state
+                ':focus': {
+                    // 'color': 'black'
+                },
+                // style valid state
+                '.valid': {
+                    'color': 'green'
+                },
+                // style invalid state
+                '.invalid': {
+                    'color': 'red'
+                },
+            }
+        });
+
+
+        function checkBooking() {
+            let order_name = document.querySelector("#order_name").value;
+            let order_email = document.querySelector("#order_email").value;
+            let order_tel = document.querySelector("#order_tel").value;
+            if (order_name == "" || order_email == "" || order_tel == "") {
+                alert("聯絡資訊未填");
+                return;
+            } else {
+                
+                // 取得 TapPay Fields 的 status
+                const tappayStatus = TPDirect.card.getTappayFieldsStatus()
+
+                // 確認是否可以 getPrime
+                if (tappayStatus.canGetPrime === false) {
+                    alert("信用卡資訊未填或有誤");
+                    return;
+                }
+
+                // Get prime
+                TPDirect.card.getPrime((result) => {
+                    if (result.status !== 0) {
+                        console.log('get prime error ' + result.msg)
+                        return;
+                    }
+                    // alert('get prime 成功，prime: ' + result.card.prime);
+                    console.log(bookingInfo);
+
+                    // send prime to your server, to pay with Pay by Prime API .
+                    // Pay By Prime Docs: https://docs.tappaysdk.com/tutorial/zh/back.html#pay-by-prime-api
+             
+                    // orderApi_src = "http://3.18.227.207:3000/api/orders"
+                    // orderApi_src = "http://127.0.0.1:3000/api/orders";
+                    let orderApi_src = config.url + "api/orders";
+
+                    fetch(orderApi_src, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            "prime": result.card.prime,
+                            "order": {
+                                "price": bookingInfo.price,
+                                "trip": {
+                                    "attraction": {
+                                        "id": bookingInfo.attraction.id,
+                                        "name": bookingInfo.attraction.name,
+                                        "address": bookingInfo.attraction.address,
+                                        "image": bookingInfo.attraction.image,
+                                    },
+                                    "date": bookingInfo.date,
+                                    "time": bookingInfo.time,
+                                },
+                                "contact": {
+                                    "name": order_name,
+                                    "email": order_email,
+                                    "phone": order_tel
+                                }
+                            }
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(function (response) {
+                        return response.json();
+                    }).then(function (result) {
+                        // console.log(result);
+                        if (result.hasOwnProperty('error')) {
+                            alert(result.message);
+                        } else {
+                            console.log(result);
+                            document.location.href = config.url+"thankyou?number="+ result.data.number;
+                        }
+
+                    });
+
+                });   
+
+            }
 
         }
 

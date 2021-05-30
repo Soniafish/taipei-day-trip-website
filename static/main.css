@@ -605,6 +605,22 @@ footer{
 .booking_del:hover{
     opacity: .8;
 }
+.thks_wrap{
+    text-align: center;
+    padding-top: 40px;
+}
+.thks_wrap h3{
+    font-weight: bold;
+    font-size: 1.2em;
+    line-height: 2;
+    margin-bottom: 20px;
+}
+.thks_wrap #order_number{
+    margin-bottom: 50px;
+    font-size: 1.2em;
+    letter-spacing: 2px;
+    color: #448899;
+}
 @media screen and (max-width: 1007px) {
     .booking_wrap{
         padding: 40px 80px 0;
