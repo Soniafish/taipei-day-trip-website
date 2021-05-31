@@ -17,7 +17,7 @@ function handel_userinfo() {
             btn_signinToPopup.classList.add("show");
 
             //如果是booking頁, 直接導到首頁
-            if (location.href.split("/")[location.href.split("/").length - 1]=="booking"){
+            if (location.href.indexOf("booking") !== -1 || location.href.indexOf("thankyou") !== -1){
                 document.location.href = config.url;
             }
 
