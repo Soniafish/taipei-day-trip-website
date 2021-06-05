@@ -14,27 +14,22 @@ import ssl      #mac才要加
 ssl._create_default_https_context = ssl._create_unverified_context  #mac才要加
 from datetime import datetime
 
+# connection_pool = None
 load_dotenv()
 os.environ
 
-try:
-    # 建立connection_pool物件
-    global connection_pool
-    connection_pool = pooling.MySQLConnectionPool(
-        pool_name="pynative2_pool",
-        pool_size=200,
-        pool_reset_session=True,
-        host=os.environ["db_host"],
-        database='tripWebsite',
-        user=os.environ["db_user"],
-        password=os.environ["db_password"])
-    print("Printing connection pool properties ")
-    print("Connection Pool Name - ", connection_pool.pool_name)
-    print("Connection Pool Size - ", connection_pool.pool_size)
-
-except Exception as ex:
-    # 資料庫連線失敗
-    print("Error while connecting to MySQL using Connection pool ", ex)
+# 建立connection_pool物件
+connection_pool = pooling.MySQLConnectionPool(
+    pool_name="pynative2_pool",
+    pool_size=200,
+    pool_reset_session=True,
+    host=os.environ["db_host"],
+    database='tripWebsite',
+    user=os.environ["db_user"],
+    password=os.environ["db_password"])
+print("Printing connection pool properties ")
+print("Connection Pool Name - ", connection_pool.pool_name)
+print("Connection Pool Size - ", connection_pool.pool_size)
 
 
 
