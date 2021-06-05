@@ -224,3 +224,8 @@ function clearErrorMessage() {
     }
 
 }
+
+// 回到首頁
+function goIndex() {
+    document.location.href = config.url;
+}
