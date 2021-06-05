@@ -21,7 +21,7 @@ os.environ
 # 建立connection_pool物件
 connection_pool = pooling.MySQLConnectionPool(
     pool_name="pynative2_pool",
-    pool_size=200,
+    pool_size=20,
     pool_reset_session=True,
     host=os.environ["db_host"],
     database='tripWebsite',
