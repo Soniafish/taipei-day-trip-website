@@ -1,4 +1,4 @@
-// userApi_src = "http://3.18.227.207:3000/api/attraction/"+ id;
+// userApi_src = "http://3.18.227.207/api/attraction/"+ id;
 // userApi_src = "http://127.0.0.1:3000/api/attraction/"+ id;
 let userApi_src = config.url + "api/user";
 let user;
