@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="http://3.18.227.207/static/main.css">
+    <link rel="stylesheet" href="http://taipei-trip.online/static/main.css">
     <!-- <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css"> -->
     <title>Taipei-TRIP</title>
 </head>
@@ -26,7 +26,7 @@
                 <p>探索每個角落，體驗城市的深度旅遊行程</p>
                 <div class="search_wrap">
                     <input type="text" placeholder="輸入景點名稱查詢" id="searchAttractions">
-                    <button onclick="searchAttractions()"><img src="http://3.18.227.207/static/images/search.svg" alt="search"></button>
+                    <button onclick="searchAttractions()"><img src="http://taipei-trip.online/static/images/search.svg" alt="search"></button>
                 </div>
             </div>
         </div>
@@ -34,8 +34,8 @@
         <div class="container" id="attrationsList_wrap">
             <div class="attrations_list" id="attrations_list">
             <!-- <div class="attrationBox">
-                    <a href="http://3.18.227.207/attraction.html">
-                        <img src="http://3.18.227.207/static/images/empty.png" style="background-image:url('http://via.placeholder.com/600x600')" alt="" width="100%">
+                    <a href="http://taipei-trip.online/attraction.html">
+                        <img src="http://taipei-trip.online/static/images/empty.png" style="background-image:url('http://via.placeholder.com/600x600')" alt="" width="100%">
                     </a>
                     <p class="attrationBox_name">平安鐘</p>
                     <p class="attrationBox_info">
@@ -100,7 +100,7 @@
 
     <div class="popup" id="popup_login">
         <span></span>
-        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="http://3.18.227.207/static/images/esc.svg" alt=""></a>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="http://taipei-trip.online/static/images/esc.svg" alt=""></a>
         <p class="title">登入會員帳號</p>
         <div>
             <input type="email" name="useremail" placeholder="輸入電子信箱" id="login_useremail">
@@ -116,7 +116,7 @@
     </div>
     <div class="popup" id="popup_regist">
         <span></span>
-        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="http://3.18.227.207/static/images/esc.svg" alt=""></a>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="http://taipei-trip.online/static/images/esc.svg" alt=""></a>
         <p class="title">註冊會員帳號</p>
         <div>
             <input type="text" placeholder="輸入姓名" id="regist_username">
@@ -136,13 +136,13 @@
     </div>
     <div class="pagecover" onclick="closePopup(this)"></div>
 
-    <script type="text/javascript" src="http://3.18.227.207/static/config.js"></script>
+    <script type="text/javascript" src="http://taipei-trip.online/static/config.js"></script>
     <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/config.js"></script> -->
 
-    <script type="text/javascript" src="http://3.18.227.207/static/user.js"></script>
+    <script type="text/javascript" src="http://taipei-trip.online/static/user.js"></script>
     <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/user.js"></script> -->
 
-    <script type="text/javascript" src="http://3.18.227.207/static/booking.js"></script>
+    <script type="text/javascript" src="http://taipei-trip.online/static/booking.js"></script>
     <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/booking.js"></script> -->
     <script>
         let currentKeyword="all";
@@ -178,11 +178,11 @@
         function apiAttractions(keyword, page) {
             let src = "";
             if (keyword == 'all') {
-                // src = "http://3.18.227.207/api/attractions?page=" + page;
+                // src = "http://taipei-trip.online/api/attractions?page=" + page;
                 // src = "http://127.0.0.1:3000/api/attractions?page=" + page;
                 src = config.url + "api/attractions?page=" + page;
             } else {
-                // src = "http://3.18.227.207/api/attractions?page=" + page+"&keyword=" + keyword;
+                // src = "http://taipei-trip.online/api/attractions?page=" + page+"&keyword=" + keyword;
                 // src = "http://127.0.0.1:3000/api/attractions?page=" + page + "&keyword=" + keyword;
                 src = config.url + "api/attractions?page=" + page + "&keyword=" + keyword;
 
@@ -199,7 +199,7 @@
                     //畫畫面
                     let attrations_list = document.getElementById("attrations_list");
                     for (let i = 0; i < result.data.length; i++) {
-                        // let attrationHref = "http://3.18.227.207/attraction/" + result.data[i].id;
+                        // let attrationHref = "http://taipei-trip.online/attraction/" + result.data[i].id;
                         // let attrationHref = "http://127.0.0.1:3000/attraction/" + result.data[i].id;
                         let attrationHref = config.url + "attraction/"+result.data[i].id;
                         let imgSrc = result.data[i].images[0];
@@ -214,7 +214,7 @@
                         attrationBoxImgLink.href= attrationHref;
 
                         let attrationBoxImg = document.createElement('img');
-                        attrationBoxImg.src = "http://3.18.227.207/static/images/empty.png";
+                        attrationBoxImg.src = "http://taipei-trip.online/static/images/empty.png";
                         attrationBoxImg.style.backgroundImage = "url(" + imgSrc + ")";
                     
                         attrationBoxImg.alt = attrationName;
