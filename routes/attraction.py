@@ -4,7 +4,7 @@ from flask import *
 import json
 import pymysql
 
-def getAttractions(page, keyword, cursor):    
+def getAttractions(page, keyword, cursor):   
 	# print(page , keyword)
 	statement=""
 	p_idx = 12 * page
@@ -14,6 +14,7 @@ def getAttractions(page, keyword, cursor):
 	if keyword=="":
 		cursor.execute("select count(*) from taipeiAttrations")
 		count=cursor.fetchone()
+		# print("count")
 		# print(count[0])
 		if count[0] < p_idx:
 			return Response(
@@ -40,12 +41,12 @@ def getAttractions(page, keyword, cursor):
 		statement ="select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations where name like '%"+keyword+f"%' order by id limit {p_idx},{p_count}"
 	# print(statement)
 	
-	result=cursor.execute(statement)
-	# print(result)
-	if result:   
-		filterData=cursor.fetchall()   #取得景點
+	cursor.execute(statement)
+	filterData=cursor.fetchall() #取得景點
+	# print("filterData")
+	# print(filterData)
 
-		# print(filterData)
+	if filterData:   
 		data=[]
 		for item in filterData:
 			images=item[9].split(",")
@@ -63,6 +64,7 @@ def getAttractions(page, keyword, cursor):
 			})
 
 			# print(data[0]["images"])
+
 		return Response(
 				response=json.dumps({
 					"nextPage": nextPage,
@@ -95,10 +97,11 @@ def getAttractions(page, keyword, cursor):
 
 def getAttraction(attractionId, cursor):
 	statement=f"select id, name, category, description, address, transport, mrt, latitude, longitude, images from taipeiAttrations where id={attractionId}"
-	result=cursor.execute(statement)
-	if result:
-		filterData=cursor.fetchone()
-		# print(filterData)
+	cursor.execute(statement)
+	filterData=cursor.fetchone()
+	# print(filterData)
+
+	if filterData:
 		images=filterData[9].split(",")
 		data={
 			"id": filterData[0],

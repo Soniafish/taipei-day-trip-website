@@ -5,6 +5,8 @@ import os
 from dotenv import load_dotenv
 from flask import *
 import json
+from mysql.connector import Error
+from mysql.connector import pooling
 import pymysql
 import routes.attraction as attraction_api
 import requests
@@ -12,33 +14,23 @@ import ssl      #mac才要加
 ssl._create_default_https_context = ssl._create_unverified_context  #mac才要加
 from datetime import datetime
 
+# connection_pool = None
 load_dotenv()
 os.environ
 
-db_settings = {
-    "host": os.environ["db_host"],    #主機
-    "port": 3306,           #埠號    
-    "user": os.environ["db_user"],         #使用者名稱
-    "password": os.environ["db_password"], #使用者帳號
-    "db": "tripWebsite",        #資料庫名稱
-}
+# 建立connection_pool物件
+connection_pool = pooling.MySQLConnectionPool(
+    pool_name="pynative2_pool",
+    pool_size=20,
+    pool_reset_session=True,
+    host=os.environ["db_host"],
+    database='tripWebsite',
+    user=os.environ["db_user"],
+    password=os.environ["db_password"])
+print("Printing connection pool properties ")
+print("Connection Pool Name - ", connection_pool.pool_name)
+print("Connection Pool Size - ", connection_pool.pool_size)
 
-def db_connect():
-    try:
-        # 建立Connection物件
-        connect = pymysql.connect(**db_settings)
-        print("connect db_settings")
-        return connect
-
-    except Exception as ex:
-        print(ex)
-        return "資料庫連線失敗"
-
-# 連線DB
-cnnt=db_connect()
-
-# 建立Cursor物件
-cursor=cnnt.cursor()
 
 
 app=Flask(__name__)
@@ -50,36 +42,62 @@ app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 # Pages
 @app.route("/")
 def index():
-	return render_template("index.html")
+    return render_template("index.html")
 @app.route("/attraction/<id>")
 def attraction(id):
-	return render_template("attraction.html")
+    return render_template("attraction.html")
 @app.route("/booking")
 def booking():
-	return render_template("booking.html")
+    return render_template("booking.html")
 @app.route("/thankyou")
 def thankyou():
-	return render_template("thankyou.html")
+    return render_template("thankyou.html")
 
 
 @app.route("/api/attractions", methods=["GET"])
 def handleAttractions():
-	page=request.args.get("page", 0)  #預設page值為0
-	page=int(page)
-	keyword=request.args.get("keyword", "")  #預設keyword值為""
-	# print(page)
-	# print(keyword)
-	return attraction_api.getAttractions(page, keyword, cursor)
-	
+    # 建立cursor物件
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
+    print("connection_object_attractions")
+    print(connection_object)
+    print(cursor)
+
+    #預設page值為0
+    page=request.args.get("page", 0)
+    page=int(page)
+    keyword=request.args.get("keyword", "")  #預設keyword值為""
+    # print(page)
+    # print(keyword)
+
+    # 關閉db連線
+    result = attraction_api.getAttractions(page, keyword, cursor)
+    cursor.close()
+    connection_object.close()
+    return result
+    
 @app.route("/api/attraction/<attractionId>", methods=["GET"])
 def handleAttraction(attractionId):
-	# attractionId=int(attractionId)
-	# print(type(attractionId))
-	return attraction_api.getAttraction(attractionId, cursor)
+    # 建立cursor物件
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
+
+    # attractionId=int(attractionId)
+    # print(type(attractionId))
+
+    # 關閉db連線
+    result = attraction_api.getAttraction(attractionId, cursor)
+    cursor.close()
+    connection_object.close()
+    return result
 
 
 @app.route("/api/user", methods=["POST"]) #註冊
 def handel_signup():
+    # 建立cursor物件 
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
+
     try:
         insertValues=request.get_json()
         userName=insertValues["name"]
@@ -87,8 +105,12 @@ def handel_signup():
         userPW=insertValues["password"]
 
         # 篩選資料表的資料
-        result=cursor.execute("SELECT * FROM user where email='"+userEmail+"'")
-        if result: # 註冊失敗:即資料表已有該使用者帳號
+        cursor.execute("SELECT * FROM user where email='"+userEmail+"'")
+        filterData=cursor.fetchone()
+        
+        if filterData: # 註冊失敗:即資料表已有該使用者帳號
+            cursor.close()
+            connection_object.close()
             return Response(
                 response=json.dumps({
                     "error": True,
@@ -100,7 +122,10 @@ def handel_signup():
             
         # 註冊成功：即資料表無該使用者帳號
         cursor.execute("INSERT INTO user(name, email, password)VALUES('" + userName + "','" + userEmail + "', '" + userPW + "')")
-        cnnt.commit()
+        connection_object.commit()
+
+        cursor.close()
+        connection_object.close()
         return Response(
             response=json.dumps({"ok": True}),
             status=200,
@@ -108,6 +133,8 @@ def handel_signup():
         ) 
     except Exception as e:
         print(e) 
+        cursor.close()
+        connection_object.close()
         return Response(
             response=json.dumps({
                 "error": True,
@@ -120,20 +147,32 @@ def handel_signup():
 
 @app.route("/api/user", methods=["PATCH"]) #登入
 def handel_signin():
+    # 建立cursor物件 
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
+    print("connection_object_user")
+    print(connection_object)
+    print(cursor)
+    
     try:
         insertValues=request.get_json()
         userEmail=insertValues["email"]
         userPW=insertValues["password"]
+        
         # print("select * from user where email='"+userEmail+"' and password='"+userPW+"'")
         # 篩選資料表的資料
-        result=cursor.execute("select * from user where email='"+userEmail+"' and password='"+userPW+"'")
-        # print(result)
-        if result:   # 登入成功：即帳號/密碼皆存在資料表
-            select_data=cursor.fetchone()   #取得使用者資料
+        cursor.execute("select * from user where email='"+userEmail+"' and password='"+userPW+"'")
+        select_data=cursor.fetchone()#取得使用者資料
+        # print(select_data)
+        
+        if select_data:   # 登入成功：即帳號/密碼皆存在資料表
+        
             session["userId"] = select_data[0]
             session["userName"] = select_data[1]
             session["userEmail"] = select_data[2]
 
+            cursor.close()
+            connection_object.close()
             return Response(
                     response=json.dumps({"ok": True}),
                     status=200,
@@ -141,6 +180,8 @@ def handel_signin():
                 )
         
         # 登入失敗：即帳號或密碼不存在資料表
+        cursor.close()
+        connection_object.close()
         return Response(
                     response=json.dumps({
                         "error": True,
@@ -151,6 +192,8 @@ def handel_signin():
                 )
     except Exception as e:
         print(e) 
+        cursor.close()
+        connection_object.close()
         return Response(
                     response=json.dumps({
                         "error": True,
@@ -204,23 +247,31 @@ def handel_signout():
 
 @app.route("/api/booking", methods=["GET"]) #取得未下單的預定行程
 def handel_getBooking():
+    # 建立cursor物件
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
+
     if "userId" in session:
         userId = session["userId"]
-        result = cursor.execute(f"select * from booking where userId='{userId}'")
-        print(result)
-        if result:
-            select_data=cursor.fetchone()
+
+        cursor.execute(f"select * from booking where userId='{userId}'")
+        select_data=cursor.fetchone()
+        print(select_data)
+
+        if select_data:
             booking_attraction=select_data[2]
             booking_date=select_data[3]
             booking_time=select_data[4]
             booking_price=select_data[5]
 
-            result_attration = cursor.execute(f"select * from taipeiAttrations where id='{booking_attraction}'")
+            cursor.execute(f"select * from taipeiAttrations where id='{booking_attraction}'")
             select_data2=cursor.fetchone()
             attraction_name=select_data2[1]
             attraction_address=select_data2[4]
             attraction_imgs=select_data2[7].split(",")
-            # response data待處理
+            
+            cursor.close()
+            connection_object.close()
             return Response(
                 response=json.dumps({
                     "data": {
@@ -239,6 +290,8 @@ def handel_getBooking():
                 content_type='application/json'
             )
 
+        cursor.close()
+        connection_object.close()
         return Response(
             response=json.dumps({
                 "data": None
@@ -247,6 +300,8 @@ def handel_getBooking():
             content_type='application/json'
         )
 
+    cursor.close()
+    connection_object.close()
     return Response(
         response=json.dumps({
             "error": True,
@@ -259,6 +314,10 @@ def handel_getBooking():
 
 @app.route("/api/booking", methods=["POST"]) #建立新的預定行程
 def handel_setBooking():
+    # 建立cursor物件 
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
+
     if "userId" in session:
         try:
             userId = session["userId"]
@@ -279,14 +338,18 @@ def handel_setBooking():
                 )
 
             # 篩選資料表的資料
-            result=cursor.execute(f"SELECT * FROM booking where userId='{userId}'")
-            if result: # 使用者曾預定過行程:即資料表已有該使用者帳號
+            cursor.execute(f"SELECT * FROM booking where userId='{userId}'")
+            filterData=cursor.fetchone()
+
+            if filterData: # 使用者曾預定過行程:即資料表已有該使用者帳號
                 print(f"UPDATE booking SET attractionId='{attractionId}', date='{date}', time='{time}', price='{price}' WHERE userId='{userId}'")
                 cursor.execute(f"UPDATE booking SET attractionId='{attractionId}', date='{date}', time='{time}', price='{price}' WHERE userId='{userId}'")
             else: # 使用者未曾預定過行程:即資料表無該使用者帳號
                 print(f"INSERT INTO booking(userId, attractionId, date, time, price)VALUES('{userId}','{attractionId}', '{date}', '{time}', '{price}')")
                 cursor.execute(f"INSERT INTO booking(userId, attractionId, date, time, price)VALUES('{userId}','{attractionId}', '{date}', '{time}', '{price}')")
-            cnnt.commit()
+            connection_object.commit()
+            cursor.close()
+            connection_object.close()
             return Response(
                 response=json.dumps({
                     "ok": True
@@ -297,6 +360,8 @@ def handel_setBooking():
 
         except Exception as e:
             print(e) 
+            cursor.close()
+            connection_object.close()
             return Response(
                 response=json.dumps({
                     "error": True,
@@ -306,6 +371,8 @@ def handel_setBooking():
                 content_type='application/json'
             )
 
+    cursor.close()
+    connection_object.close()
     return Response(
         response=json.dumps({
             "error": True,
@@ -318,10 +385,16 @@ def handel_setBooking():
 
 @app.route("/api/booking", methods=["DELETE"]) #刪除目前的預定行程
 def handel_delBooking():
+    # 建立cursor物件 
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
+
     if "userId" in session:
         userId = session["userId"]
         cursor.execute(f"DELETE FROM booking WHERE userId='{userId}'")
-        cnnt.commit()
+        connection_object.commit()
+        cursor.close()
+        connection_object.close()
         return Response(
                 response=json.dumps({
                     "ok": True
@@ -329,7 +402,9 @@ def handel_delBooking():
                 status=200,
                 content_type='application/json'
             )
-   
+
+    cursor.close()
+    connection_object.close()
     return Response(
             response=json.dumps({
                 "error": True,
@@ -342,6 +417,10 @@ def handel_delBooking():
 
 @app.route("/api/orders", methods=["POST"]) #建立新訂單並完成付款
 def handel_orders():
+    # 建立cursor物件 
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
+
     if "userId" in session:
         try:
             insertValues=request.get_json()
@@ -362,11 +441,12 @@ def handel_orders():
             # print("date and time:"+orderNumber)
             userId=session["userId"]
 
-            resultOrder=cursor.execute(f"INSERT INTO orders(number, userId, price, attractionId, attractionName, attractionAddr, attractionImg, tripDate, tripTime, contactName, contactEmail, contactPhone, status)VALUES('{orderNumber}','{userId}', '{price}', '{attractionId}', '{attractionName}', '{attractionAddr}', '{attractionImg}', '{tripDate}', '{tripTime}', '{contactName}', '{contactEmail}', '{contactPhone}', '{0}')")
-            print("resultOrder:")
-            print(resultOrder)
-            cnnt.commit()
-            if resultOrder ==1: #訂單成立           
+            cursor.execute(f"INSERT INTO orders(number, userId, price, attractionId, attractionName, attractionAddr, attractionImg, tripDate, tripTime, contactName, contactEmail, contactPhone, status)VALUES('{orderNumber}','{userId}', '{price}', '{attractionId}', '{attractionName}', '{attractionAddr}', '{attractionImg}', '{tripDate}', '{tripTime}', '{contactName}', '{contactEmail}', '{contactPhone}', '{0}')")
+            print("rowcount")
+            print(cursor.rowcount)
+            connection_object.commit()
+
+            if cursor.rowcount: #訂單成立           
                 url = "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
                 headers = {
                     "Content-Type":"application/json",
@@ -393,8 +473,9 @@ def handel_orders():
 
                 if json.loads(response.text)["status"] == 0:
                     cursor.execute(f"UPDATE orders SET status='{1}' WHERE number='{orderNumber}'")
-                    cnnt.commit()
-
+                    connection_object.commit()
+                    cursor.close()
+                    connection_object.close()
                     return Response(
                         response=json.dumps({
                             "data": {
@@ -409,6 +490,8 @@ def handel_orders():
                         content_type='application/json'
                     )
 
+                cursor.close()
+                connection_object.close()
                 return Response(
                     response=json.dumps({
                         "data": {
@@ -423,6 +506,8 @@ def handel_orders():
                     content_type='application/json'
                 )
 
+            cursor.close()
+            connection_object.close()
             return Response(
                 response=json.dumps({
                     "error": True,
@@ -434,6 +519,8 @@ def handel_orders():
 
         except Exception as e:
             print(e) 
+            cursor.close()
+            connection_object.close()
             return Response(
                 response=json.dumps({
                     "error": True,
@@ -443,6 +530,8 @@ def handel_orders():
                 content_type='application/json'
             )
     else:
+        cursor.close()
+        connection_object.close()
         return Response(
                 response=json.dumps({
                     "error": True,
@@ -452,8 +541,9 @@ def handel_orders():
                 content_type='application/json'
             )
 
+
 if (os.environ['localdebug']=='true'):
     app.run(port=3000)
 else:
     app.run(port=3000, host='0.0.0.0')
-	
+    
