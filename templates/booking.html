@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://taipei-trip.online/static/main.css">
+    <link rel="stylesheet" href="/static/main.css">
+    <!-- <link rel="stylesheet" href="https://taipei-trip.online/static/main.css"> -->
     <!-- <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css"> -->
     <title>Taipei-TRIP</title>
 </head>
@@ -15,9 +16,10 @@
         <div class="header_top container">
             <h1 onclick="goIndex()">台北一日遊</h1>
             <div>
+                <a href="/album" class="btn_txt">Album</a>
                 <a href="javascript:void(0);" class="btn_txt" onclick="getBooking()">預定行程</a>
                 <a href="javascript:void(0);" class="btn_txt" id="signinToPopup" onclick="openPopup('popup_login')">登入/註冊</a>
-                <a href="javascript:void(0);" class="btn_txt" id="signout" onclick="signout()">登出系統</a>
+                <a href="javascript:void(0);" class="btn_txt" id="signout" onclick="signout()">登出</a>
             </div>
         </div>
     </header>
@@ -39,7 +41,7 @@
                         <p class="booking_infoTrip_item">地點：<span id="booking_attrationAddr"></span></p>
                     </div>
                 </div>
-                <a href="javascript:void(0);" class="booking_del" onclick="delBooking()"><img src="https://taipei-trip.online/static/images/delet.svg" alt=""></a>
+                <a href="javascript:void(0);" class="booking_del" onclick="delBooking()"><img src="/static/images/delet.svg" alt=""></a>
             </div>
         </div>
 
@@ -67,8 +69,7 @@
 
     <div class="popup" id="popup_login">
         <span></span>
-        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img
-                src="https://taipei-trip.online/static/images/esc.svg" alt=""></a>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="/static/images/esc.svg" alt=""></a>
         <p class="title">登入會員帳號</p>
         <div>
             <input type="email" name="useremail" placeholder="輸入電子信箱" id="login_useremail">
@@ -84,8 +85,7 @@
     </div>
     <div class="popup" id="popup_regist">
         <span></span>
-        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img
-                src="https://taipei-trip.online/static/images/esc.svg" alt=""></a>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="/static/images/esc.svg" alt=""></a>
         <p class="title">註冊會員帳號</p>
         <div>
             <input type="text" placeholder="輸入姓名" id="regist_username">
@@ -105,13 +105,16 @@
     </div>
     <div class="pagecover" onclick="closePopup(this)"></div>
 
-    <script type="text/javascript" src="https://taipei-trip.online/static/config.js"></script>
+    <script type="text/javascript" src="/static/config.js"></script>
+    <!-- <script type="text/javascript" src="https://taipei-trip.online/static/config.js"></script> -->
     <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/config.js"></script> -->
 
-    <script type="text/javascript" src="https://taipei-trip.online/static/user.js"></script>
+    <script type="text/javascript" src="/static/user.js"></script>
+    <!-- <script type="text/javascript" src="https://taipei-trip.online/static/user.js"></script> -->
     <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/user.js"></script> -->
 
-    <script type="text/javascript" src="https://taipei-trip.online/static/booking.js"></script>
+    <script type="text/javascript" src="/static/booking.js"></script>
+    <!-- <script type="text/javascript" src="https://taipei-trip.online/static/booking.js"></script> -->
     <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/booking.js"></script> -->
     <script>
         let bookingInfo={};
