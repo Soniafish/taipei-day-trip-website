@@ -561,7 +561,7 @@ def handel_getAlbum():
     connection_object2 = connection_pool2.get_connection()
     cursor = connection_object2.cursor()
 
-    cursor.execute(f"SELECT * FROM web_tripalbum ORDER BU id DESC")
+    cursor.execute(f"SELECT * FROM web_tripalbum ORDER BY id DESC")
     filterData=cursor.fetchall() #取得album圖片資料
     print(filterData[0])
 
