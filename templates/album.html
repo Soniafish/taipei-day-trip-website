@@ -141,13 +141,16 @@
                     console.log("tableData:", tableData);
 
                     if (tableData !== []) {
-                        var photos = data.Contents.map(function (photo, idx) {
+                        // var photos = data.Contents.map(function (photo, idx) {
+                        var photos = tableData.map(function (photo, idx) {
                             // console.log(idx);
                             // var photoKey = photo.Key;
                             var photoKey = tableData[idx].img;
                             let photoTitle = tableData[idx].title;
                             let photoDate = tableData[idx].date;
-                            var photoUrl = bucketUrl + encodeURIComponent(photoKey);
+                            // var photoUrl = bucketUrl + encodeURIComponent(photoKey);
+                            // console.log("bucketUrl: "+ bucketUrl);
+                            var photoUrl = "https://d3to6krfovxu9y.cloudfront.net/" + encodeURIComponent(photoKey);
                             return getHtml([
                                 "<div class='photo_box'>",
                                 "<img style='width:100%;' src='" + photoUrl + "'/>",
