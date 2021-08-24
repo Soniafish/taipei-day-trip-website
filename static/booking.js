@@ -31,7 +31,7 @@ function setBooking() {
         "time": attration_trip_time,
         "price": attration_trip_cost
     }
-    console.log(booking);
+    // console.log(booking);
     fetch(bookingApi_src, {
         method: 'POST',
         body: JSON.stringify(booking),

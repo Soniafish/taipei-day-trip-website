@@ -31,7 +31,18 @@ print("Printing connection pool properties ")
 print("Connection Pool Name - ", connection_pool.pool_name)
 print("Connection Pool Size - ", connection_pool.pool_size)
 
-
+# 建立connection_pool物件for RDS
+connection_pool2 = pooling.MySQLConnectionPool(
+    pool_name="pynative2_pool2",
+    pool_size=20,
+    pool_reset_session=True,
+    host=os.environ["db_host2"],
+    database='web_tripalbum',
+    user=os.environ["db_user2"],
+    password=os.environ["db_password2"])
+print("Printing connection pool properties ")
+print("Connection Pool Name - ", connection_pool2.pool_name)
+print("Connection Pool Size - ", connection_pool2.pool_size)
 
 app=Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
@@ -52,6 +63,9 @@ def booking():
 @app.route("/thankyou")
 def thankyou():
     return render_template("thankyou.html")
+@app.route("/album")
+def blogs():
+    return render_template("album.html")
 
 
 @app.route("/api/attractions", methods=["GET"])
@@ -540,6 +554,118 @@ def handel_orders():
                 status=403,
                 content_type='application/json'
             )
+
+@app.route("/api/album", methods=["GET"]) #取得相簿資料
+def handel_getAlbum():
+    # 建立cursor物件
+    connection_object2 = connection_pool2.get_connection()
+    cursor = connection_object2.cursor()
+
+    cursor.execute(f"SELECT * FROM web_tripalbum ORDER BY id DESC")
+    filterData=cursor.fetchall() #取得album圖片資料
+    print(filterData[0])
+
+    if filterData:
+        data=[]
+        for item in filterData:
+            data.append({
+                "title": item[1],
+                "img": item[3],
+                "date": item[4]
+            })
+
+        cursor.close()
+        connection_object2.close()
+        return Response(
+            response=json.dumps({
+                "data": data
+                }),
+            status=200,
+            content_type='application/json'
+        )
+
+    cursor.close()
+    connection_object2.close()
+    return Response(
+        response=json.dumps({
+            "error": true,
+            "message": "系統錯誤"
+            }),
+        status=500,
+        content_type='application/json'
+    )  
+
+
+@app.route("/api/album", methods=["POST"]) #建立相簿照片(
+def handel_setAlbum():
+    # 建立cursor物件 
+    connection_object2 = connection_pool2.get_connection()
+    cursor = connection_object2.cursor()
+
+    if "userId" in session:
+        try: 
+            insertValues=request.get_json()
+            print(insertValues)
+            userId=session["userId"]
+            album_title=insertValues["title"]
+            album_date=insertValues["date"]
+            album_imgurl=insertValues["url"]
+            if userId==None or album_title==None or album_date==None or album_imgurl==None:
+                return Response(
+                    response=json.dumps({
+                        "error": True,
+                        "message": "相簿檔案建立失敗，輸入不正確或其他原因"
+                    }),
+                    status=400,
+                    content_type='application/json'
+                )
+
+            # 篩選資料表的資料
+            cursor.execute(f"SELECT * FROM web_tripalbum WHERE img='{album_imgurl}'")
+            filterData=cursor.fetchone()
+
+            if filterData: # 使用者曾預定過行程:即資料表已有該使用者帳號
+                print(f"UPDATE web_tripalbum SET title='{album_title}', userid='{userId}', date='{album_date}' WHERE img='{album_imgurl}'")
+                cursor.execute(f"UPDATE web_tripalbum SET title='{album_title}', userid='{userId}', date='{album_date}' WHERE img='{album_imgurl}'")
+            else: # 使用者未曾預定過行程:即資料表無該使用者帳號
+                print(f"INSERT INTO web_tripalbum(title, userid, img, date)VALUES('{album_title}','{userId}', '{album_imgurl}', '{album_date}')")
+                cursor.execute(f"INSERT INTO web_tripalbum(title, userid, img, date)VALUES('{album_title}','{userId}', '{album_imgurl}', '{album_date}')")
+            connection_object2.commit()
+            cursor.close()
+            connection_object2.close()
+            return Response(
+                response=json.dumps({
+                    "ok": True
+                }),
+                status=200,
+                content_type='application/json'
+            )
+
+        except Exception as e:
+            print(request.get_json()) 
+            print(e) 
+            cursor.close()
+            connection_object2.close()
+            return Response(
+                response=json.dumps({
+                    "error": True,
+                    "message": "伺服器內部錯誤"
+                }),
+                status=500,
+                content_type='application/json'
+            )
+
+    cursor.close()
+    connection_object2.close()
+    return Response(
+        response=json.dumps({
+            "error": True,
+            "message": "未登入系統，拒絕存取"
+        }),
+        status=403,
+        content_type='application/json'
+    )
+
 
 
 if (os.environ['localdebug']=='true'):

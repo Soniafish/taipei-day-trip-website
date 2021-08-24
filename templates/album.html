@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <!-- <link rel="stylesheet" href="https://taipei-trip.online/static/main.css"> -->
+    <!-- <link rel="stylesheet" href="http://127.0.0.1:3000/static/main.css"> -->
+    <title>Taipei-TRIP</title>
+</head>
+
+<body>
+    <header>
+        <div class="header_top container">
+            <h1 onclick="goIndex()">台北一日遊</h1>
+            <div>
+                <a href="javascript:void(0);" class="btn_txt">Album</a>
+                <a href="javascript:void(0);" class="btn_txt" onclick="getBooking()">預定行程</a>
+                <a href="javascript:void(0);" class="btn_txt" id="signinToPopup"
+                    onclick="openPopup('popup_login')">登入/註冊</a>
+                <a href="javascript:void(0);" class="btn_txt" id="signout" onclick="signout()">登出</a>
+            </div>
+        </div>
+    </header>
+    <div class="maincontent">
+
+        <div id="app">
+
+        </div>
+
+    </div>
+
+    <footer>COPYRIGHT © 2021 台北一日遊</footer>
+
+    <div class="popup" id="popup_login">
+        <span></span>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img
+                src="https://taipei-trip.online/static/images/esc.svg" alt=""></a>
+        <p class="title">登入會員帳號</p>
+        <div>
+            <input type="email" name="useremail" placeholder="輸入電子信箱" id="login_useremail">
+            <span class="error" id="error_login_useremail"></span>
+        </div>
+        <div>
+            <input type="password" name="userpw" placeholder="輸入密碼" id="login_userpw">
+            <span class="error" id="error_login_userpw"></span>
+        </div>
+        <button onclick="signin()">登入帳號</button>
+        <p id="popup_loginMessage"></p>
+        <a href="javascript:void(0);" class="btn_txt" onclick="openPopup('popup_regist')">還沒有帳戶？點此註冊</a>
+    </div>
+    <div class="popup" id="popup_regist">
+        <span></span>
+        <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img
+                src="https://taipei-trip.online/static/images/esc.svg" alt=""></a>
+        <p class="title">註冊會員帳號</p>
+        <div>
+            <input type="text" placeholder="輸入姓名" id="regist_username">
+            <span class="error" id="error_regist_username"></span>
+        </div>
+        <div>
+            <input type="text" placeholder="輸入電子信箱" id="regist_useremail">
+            <span class="error" id="error_regist_useremail"></span>
+        </div>
+        <div>
+            <input type="text" placeholder="輸入密碼" id="regist_userpw">
+            <span class="error" id="error_regist_userpw"></span>
+        </div>
+        <button onclick="regist()">註冊新帳號</button>
+        <p id="popup_registMessage"></p>
+        <a href="javascript:void(0);" class="btn_txt" onclick="openPopup('popup_login')">已經有帳戶了？點此登入</a>
+    </div>
+    <div class="pagecover" onclick="closePopup(this)"></div>
+
+    <script type="text/javascript" src="/static/config.js"></script>
+    <!-- <script type="text/javascript" src="https://taipei-trip.online/static/config.js"></script> -->
+    <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/config.js"></script> -->
+
+    <script type="text/javascript" src="/static/user.js"></script>
+    <!-- <script type="text/javascript" src="https://taipei-trip.online/static/user.js"></script> -->
+    <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/user.js"></script> -->
+
+    <script type="text/javascript" src="/static/booking.js"></script>
+    <!-- <script type="text/javascript" src="https://taipei-trip.online/static/booking.js"></script> -->
+    <!-- <script type="text/javascript" src="http://127.0.0.1:3000/static/booking.js"></script> -->
+    
+    <!-- 設定S3開發套件 -->
+    <script src="/static/aws-sdk.min.js"></script>
+    <!-- <script src="./s3_photoExample.js"></script> -->
+    <script>
+        function getHtml(template) {
+            return template.join('\n');
+        }
+
+        let albumApi_src = config.url + "api/album";
+        var albumBucketName = "trip-album";
+        var bucketRegion = "us-east-2";
+        var IdentityPoolId = 'us-east-2:afd1ad27-2478-425a-8cd2-971e180bccc0';
+
+        AWS.config.update({
+            region: bucketRegion,
+            credentials: new AWS.CognitoIdentityCredentials({
+                IdentityPoolId: IdentityPoolId
+            })
+        });
+
+        var s3 = new AWS.S3({
+            apiVersion: "2006-03-01",
+            params: { Bucket: albumBucketName }
+        });
+
+        viewAlbum("Trip-photos");
+      
+        function viewAlbum(albumName) {
+            var albumPhotosKey = encodeURIComponent(albumName) + "/";
+            s3.listObjects({ Prefix: albumPhotosKey }, function (err, data) {
+                if (err) {
+                    return alert("There was an error viewing your album: " + err.message);
+                }
+                // 'this' references the AWS.Response instance that represents the response
+                var href = this.request.httpRequest.endpoint.href;
+                var bucketUrl = href + albumBucketName + "/";
+                // console.log(data.Contents);
+
+                fetch(albumApi_src).then(function (response) {
+                    return response.json();//取回的字串已轉成json
+                }).then(function (result) {
+                    
+                    if (result.data.length !== 0) {
+                        // console.log(result.data);
+                        return result.data;
+                        
+                    } else {
+                        // console.log(result.message);
+                        return [];
+                    }
+
+                }).then(function (tableData) {
+                    // console.log("tableData:", tableData);
+
+                    if (tableData !== []) {
+                        // var photos = data.Contents.map(function (photo, idx) {
+                        var photos = tableData.map(function (photo, idx) {
+                            // console.log(idx);
+                            // var photoKey = photo.Key;
+                            var photoKey = tableData[idx].img;
+                            let photoTitle = tableData[idx].title;
+                            let photoDate = tableData[idx].date;
+                            // var photoUrl = bucketUrl + encodeURIComponent(photoKey);
+                            // console.log("bucketUrl: "+ bucketUrl);
+                            var photoUrl = "https://d3to6krfovxu9y.cloudfront.net/" + encodeURIComponent(photoKey);
+                            return getHtml([
+                                "<div class='photo_box'>",
+                                "<img style='width:100%;' src='" + photoUrl + "'/>",
+                                "<p class='photo_title'>" + photoTitle + "</p>",
+                                "<p class='photo_date'>" + photoDate + "</p>",
+                                // "<a href='javascript:void(0);' onclick=\"deletePhoto('" + albumName + "','" + photoKey + "')\"> X </a>",
+                                "</div>"
+                            ]);
+                        });
+                        var htmlTemplate = [
+                            "<h2 class='blogs_title'>Album About Trip</h2>",
+                            "<div class='container blogs_wrap'>",
+                            getHtml(photos),
+                            "</div>",
+                            "<div class='container photoupload_wrap'>",
+                            "<p>分享我的一日遊照片</p>",
+                            "<div>照片標題: <input id='photoupload_title' type='text' placeholder='照片標題'/></div>",
+                            "<div>旅遊日期: <input id='photoupload_date' type='date' placeholder='請選擇出遊日期'/></div>",
+                            "<div>上傳我的照片: <input id='photoupload' type='file' accept='image/*'></div>",
+                            '<br/><button id="addphoto" onclick="addPhoto(\'' + albumName + "')\">送出</button>",
+                            "</div>",
+                        ];
+                        document.getElementById("app").innerHTML = getHtml(htmlTemplate);
+
+                        //判斷是否為已登入會員
+                        if (document.querySelector("#signinToPopup").classList == "btn_txt show") {
+                            document.querySelector(".photoupload_wrap").style.display = "none";
+                        } else {
+                            document.querySelector(".photoupload_wrap").style.display = "block";
+                        }
+
+                        //設定最小日期, 與預設日期
+                        let dateTime = new Date();
+                        dateTime = dateTime.setDate(dateTime.getDate());
+                        dateTime = new Date(dateTime).toJSON().split("T")[0];
+                        document.querySelector('#photoupload_date').max = dateTime;
+                        document.querySelector('#photoupload_date').value = dateTime;
+                    }
+                });
+                
+                
+                
+
+            });
+        }
+
+        function addPhoto(albumName) {
+            var files = document.getElementById("photoupload").files;
+            var title = document.getElementById("photoupload_title").value;
+            var date = document.getElementById("photoupload_date").value;
+            if (!files.length) {
+                return alert("請選擇上傳的照片");
+            } else if(title ==""){
+                return alert("請填寫照片標題");
+            }else if(date ==""){
+                return alert("請填寫拍照日期");
+            }
+
+            document.body.classList.add("open_popup");
+
+            var file = files[0];
+            var fileName = file.name;
+            var albumPhotosKey = encodeURIComponent(albumName) + "/";
+
+            var photoKey = albumPhotosKey + "_" + date + "_" + user.id;
+
+            // Use S3 ManagedUpload class as it supports multipart uploads
+            var upload = new AWS.S3.ManagedUpload({
+                params: {
+                    Bucket: albumBucketName,
+                    Key: photoKey,
+                    Body: file
+                }
+            });
+
+            var promise = upload.promise();
+
+            promise.then(
+                function (data) {
+                    alert("上傳成功");
+                    viewAlbum(albumName);
+                    
+                    document.body.classList.remove("open_popup");
+
+                    let albumInfo={
+                        "title": title,
+                        "date": date,
+                        "userId": user.id,
+                        "url": photoKey
+                    }
+                    // console.log(albumInfo);
+
+
+                    fetch(albumApi_src, {
+                        method: 'POST',
+                        body: JSON.stringify(albumInfo),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(function (response) {
+                        return response.json();
+                    }).then(function (result) {
+                        // console.log(result);
+                        if (result.hasOwnProperty('error')) {
+                            alert(result.message);
+                        } else {
+                            // console.log(result);
+                            
+                        }
+
+                    });
+
+                },
+                function (err) {
+                    return alert("上傳失敗: ", err.message);
+                }
+            );
+        }
+
+        function deletePhoto(albumName, photoKey) {
+            s3.deleteObject({ Key: photoKey }, function (err, data) {
+                if (err) {
+                    return alert("There was an error deleting your photo: ", err.message);
+                }
+                alert("Successfully deleted photo.");
+                viewAlbum(albumName);
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>
