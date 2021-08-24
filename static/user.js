@@ -147,7 +147,7 @@ function signin() {
 
 //登出
 function signout() {
-    // console.log("start signin");
+    // console.log("is signout");
     user={};
     fetch(userApi_src, {
         method: 'DELETE',

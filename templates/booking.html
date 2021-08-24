@@ -133,7 +133,7 @@
             }).then(function (response) {
                 return response.json();//取回的字串已轉成json
             }).then(function (result) {
-                console.log(result);
+                // console.log(result);
 
                 if(result.hasOwnProperty('data')){
                     
@@ -149,7 +149,7 @@
                         bookingInfo = result.data;
                         let attractionName = result.data.attraction.name;
                         let attractionAddress = result.data.attraction.address;
-                        let attractionImg = result.data.attraction.image;
+                        let attractionImg = result.data.attraction.image.replace("http", "https");
                         let bookingData = result.data.date;
                         let bookingTime = result.data.time;
                         let bookingPrice = result.data.price;
@@ -285,11 +285,11 @@
                 // Get prime
                 TPDirect.card.getPrime((result) => {
                     if (result.status !== 0) {
-                        console.log('get prime error ' + result.msg)
+                        // console.log('get prime error ' + result.msg)
                         return;
                     }
                     // alert('get prime 成功，prime: ' + result.card.prime);
-                    console.log(bookingInfo);
+                    // console.log(bookingInfo);
 
                     // send prime to your server, to pay with Pay by Prime API .
                     // Pay By Prime Docs: https://docs.tappaysdk.com/tutorial/zh/back.html#pay-by-prime-api
@@ -331,7 +331,7 @@
                         if (result.hasOwnProperty('error')) {
                             alert(result.message);
                         } else {
-                            console.log(result);
+                            // console.log(result);
                             document.location.href = config.url+"thankyou?number="+ result.data.number;
                         }
 

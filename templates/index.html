@@ -105,11 +105,11 @@
         <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="https://taipei-trip.online/static/images/esc.svg" alt=""></a>
         <p class="title">登入會員帳號</p>
         <div>
-            <input type="email" name="useremail" placeholder="輸入電子信箱" id="login_useremail">
+            <input type="email" name="useremail" placeholder="輸入電子信箱" value="admin@gmail.com" id="login_useremail">
             <span class="error" id="error_login_useremail"></span>
         </div>
         <div>
-            <input type="password" name="userpw" placeholder="輸入密碼" id="login_userpw">
+            <input type="password" name="userpw" placeholder="輸入密碼" value="admin1234" id="login_userpw">
             <span class="error" id="error_login_userpw"></span>
         </div>
         <button onclick="signin()">登入帳號</button>
@@ -196,7 +196,7 @@
             fetch(src).then(function (response) {
                 return response.json();//取回的字串已轉成json
             }).then(function (result) {
-                console.log(result.data);
+                // console.log(result.data);
                 nextPage = result.nextPage;
 
                 if(result.data.length!==0){
@@ -207,7 +207,7 @@
                         // let attrationHref = "https://taipei-trip.online/attraction/" + result.data[i].id;
                         // let attrationHref = "http://127.0.0.1:3000/attraction/" + result.data[i].id;
                         let attrationHref = config.url + "attraction/"+result.data[i].id;
-                        let imgSrc = result.data[i].images[0];
+                        let imgSrc = result.data[i].images[0].replace("http", "https");
                         let attrationName = result.data[i].name;
                         let attractionMrt = result.data[i].mrt;
                         let attractionCategory = result.data[i].category

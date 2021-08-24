@@ -69,11 +69,11 @@
         <a href="javascript:void(0);" class="btn_esc" onclick="closePopup(this)"><img src="/static/images/esc.svg" alt=""></a>
         <p class="title">登入會員帳號</p>
         <div>
-            <input type="email" name="useremail" placeholder="輸入電子信箱" id="login_useremail">
+            <input type="email" name="useremail" placeholder="輸入電子信箱" value="admin@gmail.com" id="login_useremail">
             <span class="error" id="error_login_useremail"></span>
         </div>
         <div>
-            <input type="password" name="userpw" placeholder="輸入密碼" id="login_userpw">
+            <input type="password" name="userpw" placeholder="輸入密碼" value="admin1234" id="login_userpw">
             <span class="error" id="error_login_userpw"></span>
         </div>
         <button onclick="signin()">登入帳號</button>
@@ -144,7 +144,7 @@
             fetch(src).then(function (response) {
                 return response.json();//取回的字串已轉成json
             }).then(function (result) {
-                console.log(result);
+                // console.log(result);
                 let attractionName = result.data.name;
                 let attractionCategory = result.data.category;
                 let attractionMrt = result.data.mrt;
@@ -168,7 +168,9 @@
                 let attraction_transport = document.querySelector("#attraction_transport");
                 attraction_transport.appendChild(document.createTextNode(attractionTransport));
 
-                attraction_imgs = attractionImgs;
+                attraction_imgs = attractionImgs.map(function (item) {
+                    return item.replace("http", "https");
+                });
                 slickImgs();
 
             });
