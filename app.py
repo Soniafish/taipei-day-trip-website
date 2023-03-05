@@ -32,17 +32,17 @@ print("Connection Pool Name - ", connection_pool.pool_name)
 print("Connection Pool Size - ", connection_pool.pool_size)
 
 # 建立connection_pool物件for RDS
-connection_pool2 = pooling.MySQLConnectionPool(
-    pool_name="pynative2_pool2",
-    pool_size=20,
-    pool_reset_session=True,
-    host=os.environ["db_host2"],
-    database='web_tripalbum',
-    user=os.environ["db_user2"],
-    password=os.environ["db_password2"])
-print("Printing connection pool properties ")
-print("Connection Pool Name - ", connection_pool2.pool_name)
-print("Connection Pool Size - ", connection_pool2.pool_size)
+# connection_pool2 = pooling.MySQLConnectionPool(
+#     pool_name="pynative2_pool2",
+#     pool_size=20,
+#     pool_reset_session=True,
+#     host=os.environ["db_host2"],
+#     database='web_tripalbum',
+#     user=os.environ["db_user2"],
+#     password=os.environ["db_password2"])
+# print("Printing connection pool properties ")
+# print("Connection Pool Name - ", connection_pool2.pool_name)
+# print("Connection Pool Size - ", connection_pool2.pool_size)
 
 app=Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
@@ -558,7 +558,7 @@ def handel_orders():
 @app.route("/api/album", methods=["GET"]) #取得相簿資料
 def handel_getAlbum():
     # 建立cursor物件
-    connection_object2 = connection_pool2.get_connection()
+    connection_object2 = connection_pool.get_connection()
     cursor = connection_object2.cursor()
 
     cursor.execute(f"SELECT * FROM web_tripalbum ORDER BY id DESC")
@@ -599,7 +599,7 @@ def handel_getAlbum():
 @app.route("/api/album", methods=["POST"]) #建立相簿照片(
 def handel_setAlbum():
     # 建立cursor物件 
-    connection_object2 = connection_pool2.get_connection()
+    connection_object2 = connection_pool.get_connection()
     cursor = connection_object2.cursor()
 
     if "userId" in session:
